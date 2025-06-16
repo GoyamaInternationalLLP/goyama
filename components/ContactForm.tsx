@@ -369,7 +369,7 @@ export default function ContactForm() {
             "Cement",
             "Flooring",
             "Lighting",
-            "Accessories",
+            "Quartz",
             "Marble",
             "Granite",
             "Mosaic",
