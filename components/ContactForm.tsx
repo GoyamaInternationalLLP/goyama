@@ -372,7 +372,6 @@ export default function ContactForm() {
             "Quartz",
             "Marble",
             "Granite",
-            "Mosaic",
             "Other",
           ].map((prod) => (
             <label key={prod} className="flex items-center">
