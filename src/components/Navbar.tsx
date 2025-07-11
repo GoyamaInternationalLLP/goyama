@@ -30,7 +30,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="relative z-30 py-5 px-4 max-w-[1440px] mx-auto flex items-center justify-between">
+    <nav className="relative z-30 py-5 px-4 max-w-[1440px] mx-auto flex items-center justify-between animate-slidedown">
       {/* Logo */}
       <div className="flex-1">
         <Link href="/">
@@ -48,7 +48,10 @@ const Navbar = () => {
       <ul className="hidden lg:flex gap-12 absolute left-1/2 -translate-x-1/2">
         {NAV_LINKS.map((link) => (
           <li key={link.key}>
-            <Link href={link.href} scroll={true}>
+            <Link
+              href={link.href}
+              scroll={true}
+            >
               <span className="regular-16 text-gray-900 cursor-pointer pb-1.5 transition-all hover:font-bold">
                 {link.label}
               </span>
@@ -86,12 +89,8 @@ const Navbar = () => {
               {activeSubmenu === "construction" && (
                 <div className="absolute left-full top-0 ml-2 bg-white rounded-lg shadow-lg p-3 w-48">
                   <ul className="space-y-1">
-                    <li className="cursor-pointer hover:text-green-900">
-                      Cement
-                    </li>
-                    <li className="cursor-pointer hover:text-green-900">
-                      Flyash
-                    </li>
+                    <li className="cursor-pointer hover:text-green-900">Cement</li>
+                    <li className="cursor-pointer hover:text-green-900">Flyash</li>
                   </ul>
                 </div>
               )}
@@ -106,12 +105,8 @@ const Navbar = () => {
                         Quartz
                       </Link>
                     </li>
-                    <li className="cursor-pointer hover:text-green-900">
-                      Marble
-                    </li>
-                    <li className="cursor-pointer hover:text-green-900">
-                      Tiles
-                    </li>
+                    <li className="cursor-pointer hover:text-green-900">Marble</li>
+                    <li className="cursor-pointer hover:text-green-900">Tiles</li>
                   </ul>
                 </div>
               )}

@@ -23,20 +23,34 @@ const Footer = () => {
         {/* Top Section: Logo + Columns */}
         <div className="flex flex-col items-start justify-center gap-[10%] md:flex-row">
           {/* Logo */}
-          <Link href="/" className="mb-10">
-            <Image src="/logo2.png" alt="logo" width={150} height={190} />
+          <Link
+            href="/"
+            className="mb-10"
+          >
+            <Image
+              src="/logo2.png"
+              alt="logo"
+              width={150}
+              height={190}
+            />
           </Link>
 
           {/* Columns */}
           <div className="flex flex-1 flex-wrap gap-10 sm:justify-between">
             {/* Learn More & Our Community */}
             {FOOTER_LINKS.map((col, idx) => (
-              <FooterColumn title={col.title} key={idx}>
+              <FooterColumn
+                title={col.title}
+                key={idx}
+              >
                 <ul className="regular-14 flex flex-col gap-4 text-gray-300">
                   {col.links.map((link, linkIdx) => (
                     <li key={linkIdx}>
                       {/* Replace "/" with your actual URLs if available */}
-                      <Link href="/" className="hover:text-blue-400 transition">
+                      <Link
+                        href="/"
+                        className="hover:text-blue-400 transition"
+                      >
                         {link}
                       </Link>
                     </li>
@@ -50,7 +64,10 @@ const Footer = () => {
               <FooterColumn title={FOOTER_CONTACT_INFO.title}>
                 <ul className="regular-14 flex flex-col gap-3 text-gray-300">
                   {FOOTER_CONTACT_INFO.links.map((link, idx) => (
-                    <li key={idx} className="flex flex-col">
+                    <li
+                      key={idx}
+                      className="flex flex-col"
+                    >
                       <span className="text-gray-300">{link.label}:</span>
                       <span className="text-blue-400 break-all">
                         {link.label.toLowerCase().includes("email") ? (
@@ -101,9 +118,7 @@ const Footer = () => {
 
         {/* Bottom Section: Copyright */}
         <div className="border-t border-gray-700" />
-        <p className="regular-14 w-full text-center text-gray-400">
-          2025 Goyama International | All rights reserved
-        </p>
+        <p className="regular-14 w-full text-center text-gray-400">2025 Goyama International | All rights reserved</p>
       </div>
     </footer>
   );

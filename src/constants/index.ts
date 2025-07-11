@@ -1,17 +1,12 @@
 // constants.ts
 export const NAV_LINKS = [
   { href: "/", key: "home", label: "Home" },
-  { href: "/#about", key: "how_goyama_works", label: "About Us" },
+  { href: "/about", key: "how_goyama_works", label: "About Us" },
   { href: "/contact", key: "contact_us", label: "Contact Us" },
 ];
 
 // CAMP SECTION
-export const PEOPLE_URL = [
-  "/person-1.png",
-  "/person-2.png",
-  "/person-3.png",
-  "/person-4.png",
-];
+export const PEOPLE_URL = ["/person-1.png", "/person-2.png", "/person-3.png", "/person-4.png"];
 
 // FEATURES SECTION
 export const FEATURES = [

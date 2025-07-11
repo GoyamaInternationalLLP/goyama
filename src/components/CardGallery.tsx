@@ -6,22 +6,13 @@ import Link from "next/link";
 import clsx from "clsx";
 import { products, Product } from "../constants/products";
 
-const categories = [
-  "ALL",
-  "BASIC SERIES",
-  "CALACATTA SERIES",
-  "CARRARA SERIES",
-  "MULTI EXOTIC SERIES",
-];
+const categories = ["ALL", "BASIC SERIES", "CALACATTA SERIES", "CARRARA SERIES", "MULTI EXOTIC SERIES"];
 
 const CardGallery: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [modalCard, setModalCard] = useState<Product | null>(null);
 
-  const filteredCards =
-    selectedCategory === "ALL"
-      ? products
-      : products.filter((c) => c.category === selectedCategory);
+  const filteredCards = selectedCategory === "ALL" ? products : products.filter((c) => c.category === selectedCategory);
 
   return (
     <section className="py-8 px-4 bg-white min-h-screen">
@@ -109,29 +100,24 @@ const CardGallery: React.FC = () => {
                 />
               )}
               <h2 className="text-xl font-bold mb-2">{modalCard.title}</h2>
-              <p className="italic text-gray-700 mb-4">
-                {modalCard.description}
-              </p>
+              <p className="italic text-gray-700 mb-4">{modalCard.description}</p>
               <div className="text-sm text-gray-600 mb-4">
                 <div>Design: {modalCard.designer}</div>
-                {modalCard.supplier && (
-                  <div className="whitespace-pre-line mt-1">
-                    {modalCard.supplier}
-                  </div>
-                )}
+                {modalCard.supplier && <div className="whitespace-pre-line mt-1">{modalCard.supplier}</div>}
               </div>
               {modalCard.tags && (
                 <div className="flex flex-wrap justify-center gap-2 mb-4">
                   {modalCard.tags.map((tag) => (
-                    <span key={tag} className="text-xs text-gray-500">
+                    <span
+                      key={tag}
+                      className="text-xs text-gray-500"
+                    >
                       {tag}
                     </span>
                   ))}
                 </div>
               )}
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-6">
-                {modalCard.date}
-              </div>
+              <div className="text-xs text-gray-400 uppercase tracking-wider mb-6">{modalCard.date}</div>
               {/* — Enquiry Button — */}
               <Link
                 href="/contact"

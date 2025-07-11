@@ -2,6 +2,9 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import MarbleCanvas from "./MarbleCanvas";
+import KitchenCanvas from "./KitchenCanvas";
+import ModelOverlay from "./ModelOverlay";
 
 const Guide: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
@@ -19,25 +22,20 @@ const Guide: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Download action: open brochure link
-    window.open(
-      "https://drive.google.com/drive/folders/16OYn4ih_SoqvZ0eGDmRz45jkmzkThHeG",
-      "_blank"
-    );
+    window.open("https://drive.google.com/drive/folders/16OYn4ih_SoqvZ0eGDmRz45jkmzkThHeG", "_blank");
     setModalOpen(false);
   };
 
   return (
-    <section className="w-full bg-white py-12">
-      <div className="max-w-screen-xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+    <section className="w-screen bg-white py-12">
+      <div className="w-full flex justify-center items-center gap-10 h-[70vh] px-4 md:px-10">
         {/* LEFT COLUMN: Text */}
-        <div>
+        {/* <div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
             Global Trade, Local Expertise – That’s Goyama International
           </h2>
 
-          <p className="text-gray-700 leading-relaxed">
-            {expanded ? fullText : previewText}
-          </p>
+          <p className="text-gray-700 leading-relaxed">{expanded ? fullText : previewText}</p>
 
           <div className="mt-6 flex flex-wrap items-center gap-4">
             <button
@@ -47,7 +45,6 @@ const Guide: React.FC = () => {
               {expanded ? "Show Less ↑" : "Read More ↓"}
             </button>
 
-            {/* Modal Trigger */}
             <button
               onClick={() => setModalOpen(true)}
               className="inline-flex items-center px-5 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none"
@@ -56,19 +53,26 @@ const Guide: React.FC = () => {
               Download Brochure
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* RIGHT COLUMN: Optimized Image */}
-        <div className="flex justify-center lg:justify-end">
-          <Image
+        {/* <div className="flex justify-center w-full h-[70vh] gap-10"> */}
+        {/* <Image
             src="/img49.png"
             alt="Container ship and global map"
             width={520}
             height={200}
             className="rounded-lg shadow-md"
             priority
-          />
-        </div>
+          /> */}
+        {/* <div className="w-full h-full bg-gray-10"> */}
+        <ModelOverlay>
+          <MarbleCanvas />
+        </ModelOverlay>
+
+        <ModelOverlay>
+          <KitchenCanvas />
+        </ModelOverlay>
       </div>
 
       {/* Modal */}
@@ -88,9 +92,7 @@ const Guide: React.FC = () => {
             >
               &times;
             </button>
-            <h2 className="text-2xl font-bold mb-6">
-              Download Our Brochure And Discover More...
-            </h2>
+            <h2 className="text-2xl font-bold mb-6">Download Our Brochure And Discover More...</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-xs font-semibold mb-1">NAME</label>
@@ -100,9 +102,7 @@ const Guide: React.FC = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-xs font-semibold mb-1">
-                  EMAIL
-                </label>
+                <label className="block text-xs font-semibold mb-1">EMAIL</label>
                 <input
                   type="email"
                   className="w-full border-b outline-none py-2 px-1 text-base"
@@ -110,27 +110,21 @@ const Guide: React.FC = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-xs font-semibold mb-1">
-                  PHONE
-                </label>
+                <label className="block text-xs font-semibold mb-1">PHONE</label>
                 <input
                   className="w-full border-b outline-none py-2 px-1 text-base"
                   required
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-xs font-semibold mb-1">
-                  LOCATION
-                </label>
+                <label className="block text-xs font-semibold mb-1">LOCATION</label>
                 <input
                   className="w-full border-b outline-none py-2 px-1 text-base"
                   required
                 />
               </div>
               <div className="mb-6">
-                <label className="block text-xs font-semibold mb-1">
-                  MESSAGE
-                </label>
+                <label className="block text-xs font-semibold mb-1">MESSAGE</label>
                 <textarea
                   rows={2}
                   className="w-full border-b outline-none py-2 px-1 text-base resize-none"
