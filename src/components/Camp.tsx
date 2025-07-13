@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import { InfiniteMovingCards } from "./ui/infinite-moving-cards";
+import { Button } from "./ui/button";
 
 interface CampProps {
   backgroundImage: string;
@@ -6,38 +10,6 @@ interface CampProps {
   subtitle: string;
   peopleJoined: string;
 }
-
-const testimonials = [
-  {
-    quote:
-      "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair.",
-    name: "Charles Dickens",
-    title: "A Tale of Two Cities",
-  },
-  {
-    quote:
-      "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep.",
-    name: "William Shakespeare",
-    title: "Hamlet",
-  },
-  {
-    quote: "All that we see or seem is but a dream within a dream.",
-    name: "Edgar Allan Poe",
-    title: "A Dream Within a Dream",
-  },
-  {
-    quote:
-      "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.",
-    name: "Jane Austen",
-    title: "Pride and Prejudice",
-  },
-  {
-    quote:
-      "Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.",
-    name: "Herman Melville",
-    title: "Moby-Dick",
-  },
-];
 
 export const CampSite = ({ backgroundImage, title, subtitle }: CampProps) => {
   return (
@@ -57,67 +29,106 @@ export const CampSite = ({ backgroundImage, title, subtitle }: CampProps) => {
 };
 
 const Camp = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Download action: open brochure link
+    window.open("https://drive.google.com/drive/folders/16OYn4ih_SoqvZ0eGDmRz45jkmzkThHeG", "_blank");
+    setModalOpen(false);
+  };
+
   return (
-    <section className="2xl:max-container relative flex flex-col py-10 lg:mb-10 lg:py-20 xl:mb-20">
+    <section
+      className="py-10"
+      // className="2xl:max-container relative flex flex-col py-10 lg:mb-10 lg:py-20 xl:mb-20"
+    >
       {/* Heading */}
       <h2 className="text-center text-black text-5xl font-bold mb-8">Collections</h2>
 
       {/* Scrollable Camp Sites */}
-      <div className="hide-scrollbar flex h-[340px] w-full items-start justify-start gap-8 overflow-x-auto lg:h-[400px] xl:h-[640px]">
-        {/* <CampSite
-          backgroundImage="bg-bg-img-2"
-          title="JUST RED"
-          subtitle="Bar Area"
-          peopleJoined="50+ Ordered"
-        />
-        <CampSite
-          backgroundImage="bg-bg-img-7"
-          title="Calacatta series"
-          subtitle="Dining Area"
-          peopleJoined="50+ Ordered"
-        />
-        <CampSite
-          backgroundImage="bg-bg-img-8"
-          title="OLYMPIA WHITE"
-          subtitle="Stair Area"
-          peopleJoined="50+ Ordered"
-        />
-        <CampSite
-          backgroundImage="bg-bg-img-5"
-          title="CARRARA BEIGE"
-          subtitle="Bar Area"
-          peopleJoined="50+ Ordered"
-        />
-        <CampSite
-          backgroundImage="bg-bg-img-3"
-          title="GRAINY BEIGE"
-          subtitle="Open Kitchen"
-          peopleJoined="50+ Ordered"
-        />
-        <CampSite
-          backgroundImage="bg-bg-img-6"
-          title="CARRARA BEIGE"
-          subtitle="Bar Area"
-          peopleJoined="50+ Ordered"
-        />
-        <CampSite
-          backgroundImage="bg-bg-img-1"
-          title="IMPERIAL WHITE"
-          subtitle="Living Room"
-          peopleJoined="50+ Ordered"
-        />
-        <CampSite
-          backgroundImage="bg-bg-img-4"
-          title="JUST RED"
-          subtitle="Bar Area"
-          peopleJoined="50+ Ordered"
-        /> */}
+      <div className="h-[340px] lg:h-[400px] xl:h-[600px]">
         <InfiniteMovingCards
           items={[]}
           speed="slow"
-          className="w-full h-full"
         />
       </div>
+
+      <div className="bg-amber-50 flex flex-col gap-10 py-10 justify-center items-center mt-10">
+        <h1 className="font-extrabold text-goyama-blue text-3xl">Dowload our brochure now</h1>
+        <Button
+          onClick={() => setModalOpen(true)}
+          size="lg"
+          className="inline-flex text-lg items-center px-5 py-2 bg-goyama-yellow text-white rounded-none hover:bg-yellow-600 focus:outline-none"
+        >
+          <span className="mr-2">📄</span>
+          Download Brochure
+        </Button>
+      </div>
+
+      {modalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+          onClick={() => setModalOpen(false)}
+        >
+          <div
+            className="relative bg-white w-full max-w-md mx-auto rounded-xl shadow-lg p-8"
+            style={{ minHeight: 520 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-3 right-4 text-3xl text-black hover:text-gray-600 z-10"
+              onClick={() => setModalOpen(false)}
+            >
+              &times;
+            </button>
+            <h2 className="text-2xl font-bold mb-6">Download Our Brochure And Discover More...</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block text-xs font-semibold mb-1">NAME</label>
+                <input
+                  className="w-full border-b outline-none py-2 px-1 text-base"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-xs font-semibold mb-1">EMAIL</label>
+                <input
+                  type="email"
+                  className="w-full border-b outline-none py-2 px-1 text-base"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-xs font-semibold mb-1">PHONE</label>
+                <input
+                  className="w-full border-b outline-none py-2 px-1 text-base"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-xs font-semibold mb-1">LOCATION</label>
+                <input
+                  className="w-full border-b outline-none py-2 px-1 text-base"
+                  required
+                />
+              </div>
+              <div className="mb-6">
+                <label className="block text-xs font-semibold mb-1">MESSAGE</label>
+                <textarea
+                  rows={2}
+                  className="w-full border-b outline-none py-2 px-1 text-base resize-none"
+                />
+              </div>
+              <button
+                type="submit"
+                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-7 py-2 rounded mt-4"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

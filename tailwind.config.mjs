@@ -3,14 +3,16 @@ import aspectRatio from "@tailwindcss/aspect-ratio";
 module.exports = {
 	darkMode: ["class"],
 	content: [
-		"./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-		"./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-		"./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+		"./src/**/*.{js,ts,jsx,tsx}",
+	],
+	safelist: [
+		"animate-scroll",
+		"hover:[animation-play-state:paused]",
 	],
 	theme: {
 		extend: {
 			animation: {
-				scroll: 'scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite',
+				scroll: 'scroll 80s forwards linear infinite',
 				slideup: "slideup 1s ease-in-out",
 				slidedown: "slidedown 1s ease-in-out",
 				slideleft: "slideleft 1s ease-in-out",
@@ -19,6 +21,9 @@ module.exports = {
 			},
 			keyframes: {
 				scroll: {
+					from: {
+						transform: 'translateX(0)',
+					},
 					to: {
 						transform: 'translate(calc(-50% - 0.5rem))',
 					},
@@ -48,6 +53,11 @@ module.exports = {
 				green: {
 					'50': '#30AF5B',
 					'90': '#292C27'
+				},
+				goyama: {
+					'yellow': '#D4AF37',
+					'blue': '#1F2A44',
+					'gray': '#5B6670'
 				},
 				gray: {
 					'10': '#EEEEEE',
@@ -107,7 +117,7 @@ module.exports = {
 				}
 			},
 			backgroundImage: {
-				'bg-img-1': "url('/img38.png)",
+				'bg-img-1': "url('/img38.png')",
 				'bg-img-2': "url('/img37.png')",
 				'bg-img-3': "url('/img44.png')",
 				'bg-img-4': "url('/img-25.png')",

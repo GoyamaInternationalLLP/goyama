@@ -30,8 +30,8 @@ const Hero = () => {
               Timeless Surfaces. Engineered to Endure
             </h1>
             <p className="mt-6 text-base md:text-lg max-w-[520px] text-gray-200 animate-slideleft">
-              Trusted by builders, architects, and developers worldwide for quality, consistency, and customized
-              solutions.
+              Trusted by builders, architects, and developers worldwide for quality, consistency, fabricators,
+              distributors and customized solutions.
             </p>
           </div>
         </div>

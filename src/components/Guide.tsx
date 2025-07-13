@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
-import MarbleCanvas from "./MarbleCanvas";
 import KitchenCanvas from "./KitchenCanvas";
+import MarbleCanvas from "./MarbleCanvas";
 import ModelOverlay from "./ModelOverlay";
 
 const Guide: React.FC = () => {
-  const [expanded, setExpanded] = useState(false);
+  // const [expanded, setExpanded] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   const fullText = `
@@ -16,7 +15,7 @@ const Guide: React.FC = () => {
     Our mission is simple—make international procurement seamless, responsive, and future-ready. We don’t just trade materials; we build partnerships, deliver turnkey solutions, and drive innovation throughout the global construction ecosystem.
   `.trim();
 
-  const previewText = fullText.slice(0, 200).trim() + "…";
+  // const previewText = fullText.slice(0, 200).trim() + "…";
 
   // Dummy submit handler
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,8 +26,8 @@ const Guide: React.FC = () => {
   };
 
   return (
-    <section className="w-screen bg-white py-12">
-      <div className="w-full flex justify-center items-center gap-10 h-[70vh] px-4 md:px-10">
+    <section className="w-full bg-white py-12">
+      <div className="max-w-screen flex gap-8 h-[60vh]">
         {/* LEFT COLUMN: Text */}
         {/* <div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
@@ -56,7 +55,7 @@ const Guide: React.FC = () => {
         </div> */}
 
         {/* RIGHT COLUMN: Optimized Image */}
-        {/* <div className="flex justify-center w-full h-[70vh] gap-10"> */}
+        {/* <div className="flex justify-center w-full h-[60vh] lg:justify-end"> */}
         {/* <Image
             src="/img49.png"
             alt="Container ship and global map"
@@ -65,7 +64,6 @@ const Guide: React.FC = () => {
             className="rounded-lg shadow-md"
             priority
           /> */}
-        {/* <div className="w-full h-full bg-gray-10"> */}
         <ModelOverlay>
           <MarbleCanvas />
         </ModelOverlay>
@@ -73,6 +71,7 @@ const Guide: React.FC = () => {
         <ModelOverlay>
           <KitchenCanvas />
         </ModelOverlay>
+        {/* </div> */}
       </div>
 
       {/* Modal */}

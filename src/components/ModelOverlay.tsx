@@ -1,5 +1,4 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
-import MarbleCanvas from "./MarbleCanvas";
 import { AiOutlineDrag } from "react-icons/ai";
 
 const ModelOverlay = ({ children }: { children: ReactNode }) => {

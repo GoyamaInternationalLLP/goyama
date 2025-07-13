@@ -7,13 +7,13 @@ const features = [
     title: "Quartz",
     description:
       "Quartz stone slabs are a top choice in modern construction, prized for their strength, style, and low maintenance.Engineered from natural quartz and resins, they offer a sleek, non-porous surface that resists stains, scratches, and moisture.",
-    image: "/img50.png",
+    image: "/Quartz_bg.png",
   },
   {
     title: "Fly Ash",
     description:
       "Fly ash is a fine, powder-like material produced during the combustion of pulverized coal in power plants. Rich in silica, alumina, and iron, it is widely used in construction to enhance the strength, durability, and workability of concrete, bricks, and cement.",
-    image: "/img54.png",
+    image: "/flyash_bg.png",
   },
 ];
 

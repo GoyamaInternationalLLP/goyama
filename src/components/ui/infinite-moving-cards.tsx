@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import { CampSite } from "../Camp";
+// import { CampSite } from "./Camp";
 
 export const InfiniteMovingCards = ({
   items,
@@ -44,8 +45,10 @@ export const InfiniteMovingCards = ({
       getDirection();
       getSpeed();
       setStart(true);
+      // requestAnimationFrame(() => setStart(true));
     }
   }
+
   const getDirection = () => {
     if (containerRef.current) {
       if (direction === "left") {
@@ -69,7 +72,7 @@ export const InfiniteMovingCards = ({
   return (
     <div
       ref={containerRef}
-      className={cn("scroller relative z-20 max-w-7xl overflow-hidden", className)}
+      className={cn("scroller relative z-20 h-full overflow-hidden", className)}
     >
       <ul
         ref={scrollerRef}
@@ -112,6 +115,12 @@ export const InfiniteMovingCards = ({
           peopleJoined="50+ Ordered"
         />
         <CampSite
+          backgroundImage="bg-bg-img-1"
+          title="IMPERIAL WHITE"
+          subtitle="Living Room"
+          peopleJoined="50+ Ordered"
+        />
+        <CampSite
           backgroundImage="bg-bg-img-7"
           title="Calacatta series"
           subtitle="Dining Area"
@@ -121,6 +130,12 @@ export const InfiniteMovingCards = ({
           backgroundImage="bg-bg-img-8"
           title="OLYMPIA WHITE"
           subtitle="Stair Area"
+          peopleJoined="50+ Ordered"
+        />
+        <CampSite
+          backgroundImage="bg-bg-img-4"
+          title="JUST RED"
+          subtitle="Bar Area"
           peopleJoined="50+ Ordered"
         />
         <CampSite
@@ -138,18 +153,6 @@ export const InfiniteMovingCards = ({
         <CampSite
           backgroundImage="bg-bg-img-6"
           title="CARRARA BEIGE"
-          subtitle="Bar Area"
-          peopleJoined="50+ Ordered"
-        />
-        <CampSite
-          backgroundImage="bg-bg-img-1"
-          title="IMPERIAL WHITE"
-          subtitle="Living Room"
-          peopleJoined="50+ Ordered"
-        />
-        <CampSite
-          backgroundImage="bg-bg-img-4"
-          title="JUST RED"
           subtitle="Bar Area"
           peopleJoined="50+ Ordered"
         />

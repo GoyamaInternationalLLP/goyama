@@ -737,6 +737,6 @@ export const products: Product[] = [
       "#InteriorDesign",
     ],
     date: "01 APRIL 2025",
-    thumbnail: "8Oxford.png",
+    thumbnail: "/8Oxford.png",
   },
 ];

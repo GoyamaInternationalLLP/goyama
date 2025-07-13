@@ -369,9 +369,10 @@ export default function ContactForm() {
             "Cement",
             "Flooring",
             "Lighting",
-            "Quartz",
+            "Accessories",
             "Marble",
             "Granite",
+            "Mosaic",
             "Other",
           ].map((prod) => (
             <label key={prod} className="flex items-center">
