@@ -27,7 +27,7 @@ const Guide: React.FC = () => {
 
   return (
     <section className="w-full bg-white py-12">
-      <div className="max-w-screen flex gap-8 h-[60vh]">
+      <div className="max-w-screen flex flex-col lg:flex-row gap-8 h-[60vh]">
         {/* LEFT COLUMN: Text */}
         {/* <div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">

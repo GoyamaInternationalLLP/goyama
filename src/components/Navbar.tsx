@@ -5,12 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { NAV_LINKS } from "../constants";
+import { usePathname } from "next/navigation";
 
 const Navbar: React.FC = () => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const pathname = usePathname();
 
   // clear pending timeout on unmount
   useEffect(() => {
@@ -53,7 +56,9 @@ const Navbar: React.FC = () => {
           <li key={link.key}>
             <Link
               href={link.href}
-              className="regular-16 text-gray-900 cursor-pointer pb-1.5 transition-all hover:font-bold"
+              className={`regular-16 text-gray-900 cursor-pointer pb-1.5 transition-all hover:font-bold ${
+                pathname === link.href && "underline"
+              }`}
             >
               {link.label}
             </Link>
@@ -131,7 +136,7 @@ const Navbar: React.FC = () => {
               <li key={link.key}>
                 <Link
                   href={link.href}
-                  className="regular-16 text-gray-900 cursor-pointer"
+                  className={`regular-16 text-gray-900 cursor-pointer ${pathname === link.href ? "underline" : ""}`}
                 >
                   {link.label}
                 </Link>

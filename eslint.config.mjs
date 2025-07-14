@@ -15,14 +15,10 @@ const eslintConfig = [
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-explicit-any": "off",
-<<<<<<< HEAD
       'prefer-const': "off",
       "@typescript-eslint/ban-ts-comment": "off",
       "react/no-unescaped-entities": "off",
       "react-hooks/exhaustive-deps": "off",
-=======
-      "@typescript-eslint/ban-ts-comment": "off",
->>>>>>> caa72f338cdd1945a98459dda199c7aa223bc543
     },
   },
 ];

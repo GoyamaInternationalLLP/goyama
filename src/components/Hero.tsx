@@ -14,7 +14,7 @@ const Hero = () => {
       />
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/30 z-10" />
+      <div className="absolute inset-0 bg-black/50 z-10" />
 
       {/* Content */}
       <div className="relative z-20 max-w-screen-xl mx-auto px-6 h-full flex">
@@ -29,7 +29,7 @@ const Hero = () => {
             <h1 className="text-4xl md:text-6xl font-bold max-w-[700px] text-white animate-slideright">
               Timeless Surfaces. Engineered to Endure
             </h1>
-            <p className="mt-6 text-base md:text-lg max-w-[520px] text-gray-200 animate-slideleft">
+            <p className="mt-6 text-base md:text-lg max-w-[520px] text-gray-200 animate-slideleft text-justify">
               Trusted by builders, architects, and developers worldwide for quality, consistency, fabricators,
               distributors and customized solutions.
             </p>

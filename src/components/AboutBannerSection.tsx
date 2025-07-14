@@ -18,11 +18,11 @@ const AboutBannerSection = () => {
 
         <div className="relative z-20 max-w-screen-xl mx-auto px-6 h-full flex p-10">
           <div className="flex flex-1 h-full items-center justify-center text-center lg:items-center lg:justify-start lg:text-left">
-            <div className="mt-52">
+            <div className="lg:mt-52">
               <h1 className="text-4xl md:text-6xl font-bold max-w-[700px] text-white animate-slideright">
                 About Goyama International
               </h1>
-              <p className="mt-6 text-base md:text-lg max-w-[520px] text-gray-200 animate-slideleft">
+              <p className="mt-6 text-base md:text-lg max-w-[520px] text-gray-200 animate-slideleft text-justify">
                 Goyama International is a globally focused export company based in India, delivering top-tier
                 construction and industrial materials to clients across the USA, UK, and beyond. With specialization in
                 engineered quartz slabs, fly ash, silica fume, flooring, and more, we merge Indian manufacturing
@@ -33,7 +33,7 @@ const AboutBannerSection = () => {
         </div>
       </div>
 
-      <div className="px-40 py-20 flex justify-between items-start gap-10">
+      <div className="px-10 lg:px-20 xl:px-40 py-20 flex flex-col lg:flex-row justify-between items-start gap-10">
         <div className="flex flex-col items-start gap-2 w-3/5 animate-slideleft">
           <h1 className="text-gray-700 border-l-4 border-[#D4AF37] pl-4 uppercase">About us</h1>
           <h1 className="text-5xl font-extrabold uppercase">
@@ -48,12 +48,12 @@ const AboutBannerSection = () => {
             alt="About Us Image"
             width={400}
             height={200}
-            className="mt-5 rounded-lg shadow-md"
+            className="mt-5 rounded-lg shadow-md hidden lg:block"
           />
         </div>
 
         <div className="w-full animate-slideright">
-          <p>
+          <p className="text-justify">
             Goyama International was founded by two partners united by a shared vision: to bridge gaps in global
             construction supply chains with innovation, reliability, and deep industry insight. One partner brings
             hands-on experience from the U.S. construction market; the other offers in-depth knowledge of India’s
@@ -64,10 +64,10 @@ const AboutBannerSection = () => {
             construction ecosystem.
           </p>
 
-          <div className="flex justify-between items-start gap-5 w-full mt-5">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-5 w-full mt-5">
             <div className="w-full">
               <h1 className="bg-goyama-blue text-white uppercase text-center p-1 mb-2">Our Vision</h1>
-              <p>
+              <p className="text-justify">
                 To become a globally trusted export house, delivering innovative and sustainable materials that shape
                 the world's infrastructure and living spaces. At Goyama International, we don't just supply materials—we
                 support the foundations of modern living, with integrity and excellence at every step.

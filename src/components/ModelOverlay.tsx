@@ -39,7 +39,7 @@ const ModelOverlay = ({ children }: { children: ReactNode }) => {
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30 pointer-events-none">
           <div className="flex flex-col items-center text-white text-3xl animate-fadeIn">
             <AiOutlineDrag className="" />
-            <p className="mt-4 text-white/80">Click and drag to rotate the 3D model</p>
+            <p className="mt-4 text-white/80 text-center">Click and drag to rotate the 3D model</p>
           </div>
         </div>
       )}

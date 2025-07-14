@@ -67,5 +67,9 @@ export const CardTitle = ({ className, children }: { className?: string; childre
   );
 };
 export const CardDescription = ({ className, children }: { className?: string; children: React.ReactNode }) => {
-  return <p className={cn("mt-8 text-goyama-gray tracking-wide leading-relaxed text-sm", className)}>{children}</p>;
+  return (
+    <p className={cn("mt-8 text-goyama-gray tracking-wide leading-relaxed text-sm text-justify", className)}>
+      {children}
+    </p>
+  );
 };
