@@ -6,7 +6,7 @@ const features = [
   {
     title: "Quartz",
     description:
-      "Quartz stone slabs are a top choice in modern construction, prized for their strength, style, and low maintenance.Engineered from natural quartz and resins, they offer a sleek, non-porous surface that resists stains, scratches, and moisture.",
+      "Quartz stone slabs are a top choice in modern construction, prized for their strength, style, and low maintenance. Engineered from natural quartz and resins, they offer a sleek, non-porous surface that resists stains, scratches, and moisture.",
     image: "/Quartz_bg.png",
   },
   {
