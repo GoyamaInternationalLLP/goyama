@@ -1,4 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
 
 @tailwind base;
 @tailwind components;
@@ -242,6 +244,7 @@ body {
 
 @layer utilities {
   .animate-scroll {
-    animation: scroll var(--animation-duration, 40s) linear infinite var(--animation-direction, forwards);
+    animation: scroll var(--animation-duration, 40s) linear infinite
+      var(--animation-direction, forwards);
   }
 }
