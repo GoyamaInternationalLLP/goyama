@@ -8,32 +8,33 @@ import { NAV_LINKS } from "../constants";
 import { usePathname } from "next/navigation";
 
 const Navbar: React.FC = () => {
-  const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
 
-  // clear pending timeout on unmount
+  // Toggle dropdown visibility
+  const toggleDropdown = () => {
+    setShowDropdown((prev) => !prev);
+  };
+
+  // Close dropdown when clicking outside
   useEffect(() => {
-    return () => {
-      if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showDropdown &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
     };
-  }, []);
-
-  const toggleSubmenu = (category: string) => {
-    setActiveSubmenu((prev) => (prev === category ? null : category));
-  };
-
-  const handleCategoryClick = () => {
-    setShowDropdown(true);
-    if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
-    dropdownTimeoutRef.current = setTimeout(() => {
-      setShowDropdown(false);
-      setActiveSubmenu(null);
-    }, 10000);
-  };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showDropdown]);
 
   return (
     <nav className="relative z-30 py-5 px-4 max-w-[1440px] mx-auto flex items-center justify-between bg-white animate-slidedown">
@@ -57,61 +58,47 @@ const Navbar: React.FC = () => {
             <Link
               href={link.href}
               className={`regular-16 text-gray-900 cursor-pointer pb-1.5 transition-all hover:font-bold ${
-                pathname === link.href && "underline"
+                pathname === link.href ? "underline" : ""
               }`}
             >
               {link.label}
             </Link>
           </li>
         ))}
+
+        {/* Categories dropdown */}
         <li className="relative">
           <button
-            onClick={handleCategoryClick}
+            ref={buttonRef}
+            onClick={toggleDropdown}
             className="regular-16 text-gray-900 cursor-pointer pb-1.5 transition-all hover:font-bold"
           >
             Categories
           </button>
 
           {showDropdown && (
-            <div className="absolute top-full left-0 mt-3 bg-white text-gray-900 shadow-xl rounded-lg p-4 z-50 w-64">
+            <div
+              ref={dropdownRef}
+              className="absolute top-full left-0 mt-3 bg-white text-gray-900 shadow-xl rounded-lg p-4 z-50 w-48"
+            >
               <ul className="space-y-2">
-                <li
-                  onClick={() => toggleSubmenu("construction")}
-                  className="bold-16 text-green-900 cursor-pointer hover:underline"
-                >
-                  Construction Materials
+                <li>
+                  <Link
+                    href="/flyash"
+                    className="cursor-pointer hover:text-green-900 block"
+                  >
+                    Flyash (Coming Soon)
+                  </Link>
                 </li>
-                <li
-                  onClick={() => toggleSubmenu("interior")}
-                  className="bold-16 text-green-900 cursor-pointer hover:underline"
-                >
-                  Interior
+                <li>
+                  <Link
+                    href="/quartz"
+                    className="cursor-pointer hover:text-green-900 block"
+                  >
+                    Quartz
+                  </Link>
                 </li>
               </ul>
-
-              {activeSubmenu === "construction" && (
-                <div className="absolute left-full top-0 ml-2 bg-white rounded-lg shadow-lg p-3 w-48">
-                  <ul className="space-y-1">
-                    <li className="cursor-pointer hover:text-green-900">Cement</li>
-                    <li className="cursor-pointer hover:text-green-900">Flyash</li>
-                  </ul>
-                </div>
-              )}
-
-              {activeSubmenu === "interior" && (
-                <div className="absolute left-full top-12 ml-2 bg-white rounded-lg shadow-lg p-3 w-48">
-                  <ul className="space-y-1">
-                    <li
-                      onClick={() => console.log("Quartz selected")}
-                      className="cursor-pointer hover:text-green-900"
-                    >
-                      Quartz
-                    </li>
-                    <li className="cursor-pointer hover:text-green-900">Marble</li>
-                    <li className="cursor-pointer hover:text-green-900">Tiles</li>
-                  </ul>
-                </div>
-              )}
             </div>
           )}
         </li>
@@ -136,7 +123,9 @@ const Navbar: React.FC = () => {
               <li key={link.key}>
                 <Link
                   href={link.href}
-                  className={`regular-16 text-gray-900 cursor-pointer ${pathname === link.href ? "underline" : ""}`}
+                  className={`regular-16 text-gray-900 cursor-pointer ${
+                    pathname === link.href ? "underline" : ""
+                  }`}
                 >
                   {link.label}
                 </Link>
@@ -144,41 +133,35 @@ const Navbar: React.FC = () => {
             ))}
             <li className="relative">
               <button
-                onClick={handleCategoryClick}
+                onClick={toggleDropdown}
                 className="regular-16 text-gray-900 cursor-pointer"
               >
                 Categories
               </button>
 
               {showDropdown && (
-                <div className="mt-2 bg-white rounded-lg shadow-lg p-4">
+                <div
+                  ref={dropdownRef}
+                  className="mt-2 bg-white rounded-lg shadow-lg p-4"
+                >
                   <ul className="space-y-2">
-                    <li
-                      onClick={() => toggleSubmenu("construction")}
-                      className="cursor-pointer hover:text-green-900"
-                    >
-                      Construction Materials
+                    <li>
+                      <Link
+                        href="/flyash"
+                        className="cursor-pointer hover:text-green-900 block"
+                      >
+                        Flyash
+                      </Link>
                     </li>
-                    <li
-                      onClick={() => toggleSubmenu("interior")}
-                      className="cursor-pointer hover:text-green-900"
-                    >
-                      Interior
+                    <li>
+                      <Link
+                        href="/Quartz"
+                        className="cursor-pointer hover:text-green-900 block"
+                      >
+                        Quartz
+                      </Link>
                     </li>
                   </ul>
-                  {activeSubmenu === "construction" && (
-                    <ul className="mt-2 pl-4 space-y-1">
-                      <li className="cursor-pointer hover:text-green-900">Cement</li>
-                      <li className="cursor-pointer hover:text-green-900">Flyash</li>
-                    </ul>
-                  )}
-                  {activeSubmenu === "interior" && (
-                    <ul className="mt-2 pl-4 space-y-1">
-                      <li className="cursor-pointer hover:text-green-900">Quartz</li>
-                      <li className="cursor-pointer hover:text-green-900">Marble</li>
-                      <li className="cursor-pointer hover:text-green-900">Tiles</li>
-                    </ul>
-                  )}
                 </div>
               )}
             </li>
