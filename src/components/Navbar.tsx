@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
                 </li>
                 <li>
                   <Link
-                    href="/quartz"
+                    href="/Quartz"
                     className="cursor-pointer hover:text-green-900 block"
                   >
                     Quartz
