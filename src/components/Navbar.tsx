@@ -87,12 +87,12 @@ const Navbar: React.FC = () => {
                     href="/flyash"
                     className="cursor-pointer hover:text-green-900 block"
                   >
-                    Flyash (Coming Soon)
+                    Flyash
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/quartz"
+                    href="/Quartz"
                     className="cursor-pointer hover:text-green-900 block"
                   >
                     Quartz
