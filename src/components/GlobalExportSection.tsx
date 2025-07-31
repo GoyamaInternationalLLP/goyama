@@ -167,12 +167,14 @@ const GlobalExportSection = () => {
             delivery of high-quality materials, no matter where you are.
           </motion.p>
           <motion.div variants={itemVariants}>
-            <Button
-              size="lg"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground"
-            >
-              Request a Quote <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
+            <a href="/contact">
+              <Button
+                size="lg"
+                className="bg-accent hover:bg-accent/90 text-accent-foreground"
+              >
+                Request a Quote <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </a>
           </motion.div>
         </motion.div>
       </div>
