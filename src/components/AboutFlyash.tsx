@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Building2, Globe, Award, Users } from "lucide-react";
 
@@ -12,7 +12,7 @@ const BusinessOverviewSection = () => {
   });
 
   // Animation variants for the container to stagger children
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -24,7 +24,7 @@ const BusinessOverviewSection = () => {
   };
 
   // Animation variants for the title and cards
-  const cardVariants = {
+  const cardVariants: Variants = {
     hidden: {
       opacity: 0,
       y: 50,

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Image from "next/image";
 import {
@@ -37,7 +37,7 @@ const FlyAshComposition = () => {
   });
 
   // Animation variant for content sliding in from the left
-  const slideInFromLeft = {
+  const slideInFromLeft: Variants = {
     hidden: { opacity: 0, x: -50 },
     visible: {
       opacity: 1,
@@ -47,7 +47,7 @@ const FlyAshComposition = () => {
   };
 
   // Animation variant for content sliding in from the right
-  const slideInFromRight = {
+  const slideInFromRight: Variants = {
     hidden: { opacity: 0, x: 50 },
     visible: {
       opacity: 1,
