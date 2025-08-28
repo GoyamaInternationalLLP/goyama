@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { InfiniteMovingCards } from "./ui/infinite-moving-cards";
 import { Button } from "./ui/button";
+import ImageSlider from "./ui/image-slider";
+import { COLLECTION_ITEMS } from "@/constants";
 
 interface CampProps {
   backgroundImage: string;
@@ -13,9 +15,7 @@ interface CampProps {
 
 export const CampSite = ({ backgroundImage, title, subtitle }: CampProps) => {
   return (
-    <div
-      className={`h-full w-full min-w-[1100px] ${backgroundImage} bg-cover bg-no-repeat lg:rounded-r-5xl 2xl:rounded-5xl`}
-    >
+    <div className={`h-[70vh] w-full min-w-[900px] ${backgroundImage} bg-cover object-cover bg-no-repeat`}>
       <div className="flex h-full flex-col items-start justify-between p-6 lg:px-20 lg:py-10">
         <div className="flexCenter gap-4">
           <div className="flex flex-col gap-1">
@@ -47,10 +47,11 @@ const Camp = () => {
 
       {/* Scrollable Camp Sites */}
       <div className="h-[340px] lg:h-[400px] xl:h-[600px]">
-        <InfiniteMovingCards
+        {/* <InfiniteMovingCards
           items={[]}
           speed="slow"
-        />
+        /> */}
+        <ImageSlider collections={COLLECTION_ITEMS} />
       </div>
 
       <div className="bg-amber-50 flex flex-col gap-10 py-10 justify-center items-center mt-10">

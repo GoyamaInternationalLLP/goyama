@@ -1,4 +1,6 @@
-export const textVariant = (delay: number) => {
+import { AnimationGeneratorType, Variants } from "motion";
+
+export const textVariant = (delay?: number): Variants => {
   return {
     hidden: {
       y: -50,
@@ -16,7 +18,12 @@ export const textVariant = (delay: number) => {
   };
 };
 
-export const fadeIn = (direction: "up" | "down" | "left" | "right", type: string, delay: number, duration: number) => {
+export const fadeIn = (
+  direction?: "up" | "down" | "left" | "right",
+  type?: AnimationGeneratorType,
+  delay?: number,
+  duration?: number
+): Variants => {
   return {
     hidden: {
       x: direction === "left" ? 100 : direction === "right" ? -100 : 0,
@@ -28,7 +35,7 @@ export const fadeIn = (direction: "up" | "down" | "left" | "right", type: string
       y: 0,
       opacity: 1,
       transition: {
-        type: type,
+        type: type || "tween",
         delay: delay,
         duration: duration,
         ease: "easeOut",
@@ -37,7 +44,7 @@ export const fadeIn = (direction: "up" | "down" | "left" | "right", type: string
   };
 };
 
-export const zoomIn = (delay: number, duration: number) => {
+export const zoomIn = (delay?: number, duration?: number) => {
   return {
     hidden: {
       scale: 0,
@@ -56,7 +63,12 @@ export const zoomIn = (delay: number, duration: number) => {
   };
 };
 
-export const slideIn = (direction: "up" | "down" | "left" | "right", type: string, delay: number, duration: number) => {
+export const slideIn = (
+  direction?: "up" | "down" | "left" | "right",
+  type?: AnimationGeneratorType,
+  delay?: number,
+  duration?: number
+): Variants => {
   return {
     hidden: {
       x: direction === "left" ? "-100%" : direction === "right" ? "100%" : 0,
@@ -66,7 +78,7 @@ export const slideIn = (direction: "up" | "down" | "left" | "right", type: strin
       x: 0,
       y: 0,
       transition: {
-        type: type,
+        type: type || "spring",
         delay: delay,
         duration: duration,
         ease: "easeOut",
@@ -75,7 +87,7 @@ export const slideIn = (direction: "up" | "down" | "left" | "right", type: strin
   };
 };
 
-export const staggerContainer = (staggerChildren: any, delayChildren: any) => {
+export const staggerContainer = (staggerChildren?: any, delayChildren?: any): Variants => {
   return {
     hidden: {},
     show: {

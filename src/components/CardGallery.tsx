@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
-import { products, Product } from "../constants/products";
+import { products, IProduct } from "../constants/products";
 
 const categories = ["ALL", "BASIC SERIES", "CALACATTA SERIES", "CARRARA SERIES", "MULTI EXOTIC SERIES"];
 
 const CardGallery: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
-  const [modalCard, setModalCard] = useState<Product | null>(null);
+  const [modalCard, setModalCard] = useState<IProduct | null>(null);
 
   const filteredCards = selectedCategory === "ALL" ? products : products.filter((c) => c.category === selectedCategory);
 
@@ -43,7 +43,7 @@ const CardGallery: React.FC = () => {
             onClick={() => setModalCard(card)}
           >
             <Image
-              src={card.image}
+              src={card.thumbnail}
               alt={card.title}
               fill
               className="object-cover"
@@ -99,7 +99,7 @@ const CardGallery: React.FC = () => {
                   className="mb-4 rounded"
                 />
               )}
-              <h2 className="text-xl font-bold mb-2">{modalCard.title}</h2>
+              {/* <h2 className="text-xl font-bold mb-2">{modalCard.title}</h2>
               <p className="italic text-gray-700 mb-4">{modalCard.description}</p>
               <div className="text-sm text-gray-600 mb-4">
                 <div>Design: {modalCard.designer}</div>
@@ -116,15 +116,15 @@ const CardGallery: React.FC = () => {
                     </span>
                   ))}
                 </div>
-              )}
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-6">{modalCard.date}</div>
+              )} */}
+              {/* <div className="text-xs text-gray-400 uppercase tracking-wider mb-6">{modalCard.date}</div> */}
               {/* — Enquiry Button — */}
-              <Link
+              {/* <Link
                 href="/contact"
                 className="px-6 py-2 bg-[#b8b49c] text-white rounded-md shadow hover:bg-[#a6a286]"
               >
                 Enquiry Now
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>

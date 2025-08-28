@@ -57,7 +57,8 @@ module.exports = {
 				goyama: {
 					'yellow': '#D4AF37',
 					'blue': '#1F2A44',
-					'gray': '#5B6670'
+					'gray': '#5B6670',
+					'primary': '#13434E',
 				},
 				gray: {
 					'10': '#EEEEEE',

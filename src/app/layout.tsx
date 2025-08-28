@@ -21,11 +21,7 @@ export default function RootLayout({
           color="#D4AF37"
           height={4}
         />
-        <Navbar />
-        <main className="relative overflow-hidden">{children}</main>
-        <footer id="footer">
-          <Footer />
-        </footer>
+        <div>{children}</div>
       </body>
     </html>
   );

@@ -1,9 +1,14 @@
+"use client";
+
 import Image from "next/image";
 import { FaCheckCircle } from "react-icons/fa";
+import SectionWrapper from "./SectionWrapper";
+import { motion } from "motion/react";
+import { slideIn } from "@/lib/motion";
 
 const AboutBannerSection = () => {
   return (
-    <section className="">
+    <motion.section variants={slideIn("left", "tween", 0.8, 1)}>
       <div className="relative h-full w-full">
         <Image
           src="/aboutusimg.webp"
@@ -109,7 +114,7 @@ const AboutBannerSection = () => {
           />
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 
