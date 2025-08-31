@@ -2,34 +2,41 @@
 
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { deleteCategory } from "@/lib/api";
 import { Edit, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { Category } from "../../../types";
 import { Button, buttonVariants } from "../ui/button";
 import { toast } from "sonner";
 import LoadingSpinner from "../LoadingSpinner";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Category } from "../../../types";
+import { deleteCategory } from "@/actions/categories";
 
 export const CategoriesSection = ({ categories }: { categories: Category[] }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const filteredCategories = categories.filter(
-    (category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      category.slug.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCategories = Array.isArray(categories)
+    ? categories.filter(
+        (category) =>
+          category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          category.slug.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this category?")) {
       try {
         setLoading(true);
-        await deleteCategory(id);
-        toast.success("Category deleted successfully");
-        router.refresh();
+        const res = await deleteCategory(id);
+        if (!res.success) {
+          toast.error(res.error || "Failed to delete category");
+        } else {
+          toast.success("Category deleted successfully");
+          router.refresh();
+        }
       } catch (error: any) {
         console.error("Failed to delete category:", error);
         toast.error(error.response?.data?.error || "Failed to delete category");
@@ -80,10 +87,12 @@ export const CategoriesSection = ({ categories }: { categories: Category[] }) =>
                   <TableCell>
                     <div className="flex items-center">
                       {category.imageUrl && (
-                        <img
+                        <Image
                           className="h-10 w-10 rounded-lg object-cover mr-3"
                           src={category.imageUrl}
                           alt={category.name}
+                          width={40}
+                          height={40}
                         />
                       )}
                       <div>

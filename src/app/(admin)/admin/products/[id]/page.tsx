@@ -1,3 +1,4 @@
+import { getProductById } from "@/actions/products";
 import ProductForm from "@/components/admin/ProductForm";
 import {
   Breadcrumb,
@@ -7,15 +8,20 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { fetchProductById } from "@/lib/api";
 
 const UpdateProductPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
   if (!id) return <div>Loading...</div>;
 
-  let product;
-  if (id) product = await fetchProductById(id);
+  let prodRes;
+  if (id) prodRes = await getProductById(id);
+
+  if (!prodRes?.success) {
+    return <div className="mt-4 text-red-600">Failed to load product</div>;
+  }
+
+  const product = prodRes.data;
 
   return (
     <div>

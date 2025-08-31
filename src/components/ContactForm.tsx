@@ -10,9 +10,9 @@ import { Textarea } from "./ui/textarea";
 import { FaPhoneAlt } from "react-icons/fa";
 import Image from "next/image";
 import { toast } from "sonner";
-import { createContact } from "@/lib/api";
 import { useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
+import { createContact } from "@/actions/contact";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -56,7 +56,7 @@ const ContactForm = () => {
       setIsSubmitting(true);
       const res = await createContact(values);
       if (res.success) {
-        toast.success("Contact created successfully!");
+        toast.success("Contact request sent successfully!");
         form.reset();
       } else {
         toast.error(res.error || "Something went wrong! Please try again.");

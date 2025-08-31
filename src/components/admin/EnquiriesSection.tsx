@@ -1,17 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { Category, Enquiry } from "../../../types";
-import { useRouter } from "next/navigation";
-import { deleteEnquiry } from "@/lib/api";
-import { toast } from "sonner";
-import LoadingSpinner from "../LoadingSpinner";
-import { Edit, Search, Trash2 } from "lucide-react";
-import { Input } from "../ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { Button, buttonVariants } from "../ui/button";
-import Link from "next/link";
-import { IoEye } from "react-icons/io5";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +8,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Search, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { IoEye } from "react-icons/io5";
+import { toast } from "sonner";
+import { Category, Enquiry } from "../../../types";
+import LoadingSpinner from "../LoadingSpinner";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { deleteEnquiry } from "@/actions/enquiries";
 
 const EnquiriesSection = ({ enquiries, categories }: { enquiries: Enquiry[]; categories: Category[] }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,24 +27,30 @@ const EnquiriesSection = ({ enquiries, categories }: { enquiries: Enquiry[]; cat
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const filteredEnquiries = enquiries.filter((enquiry) => {
-    const matchesSearch =
-      enquiry.product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      enquiry.product.category?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      enquiry.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      enquiry.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      enquiry.message.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || enquiry.product.categoryId === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredEnquiries = Array.isArray(enquiries)
+    ? enquiries.filter((enquiry) => {
+        const matchesSearch =
+          enquiry.product!.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          enquiry.product!.category?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          enquiry.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          enquiry.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          enquiry.message.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !selectedCategory || enquiry.product!.category?.id === selectedCategory;
+        return matchesSearch && matchesCategory;
+      })
+    : [];
 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this enquiry?")) {
       try {
         setLoading(true);
-        await deleteEnquiry(id);
-        toast.success("Enquiry deleted successfully");
-        router.refresh();
+        const res = await deleteEnquiry(id);
+        if (!res.success) {
+          toast.error(res.error || "Failed to delete enquiry");
+        } else {
+          toast.success("Enquiry deleted successfully");
+          router.refresh();
+        }
       } catch (error: any) {
         console.error("Failed to delete Enquiry:", error);
         toast.error(error.response?.data?.error || "Failed to delete Enquiry");
@@ -88,14 +93,15 @@ const EnquiriesSection = ({ enquiries, categories }: { enquiries: Enquiry[]; cat
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((category) => (
-              <SelectItem
-                key={category.id}
-                value={category.id}
-              >
-                {category.name}
-              </SelectItem>
-            ))}
+            {Array.isArray(categories) &&
+              categories.map((category) => (
+                <SelectItem
+                  key={category.id}
+                  value={category.id}
+                >
+                  {category.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>
@@ -116,8 +122,8 @@ const EnquiriesSection = ({ enquiries, categories }: { enquiries: Enquiry[]; cat
             <TableBody>
               {filteredEnquiries.map((enquiry) => (
                 <TableRow key={enquiry.id}>
-                  <TableCell>{enquiry.product.category?.name}</TableCell>
-                  <TableCell>{enquiry.product.title}</TableCell>
+                  <TableCell>{enquiry.product!.category?.name}</TableCell>
+                  <TableCell>{enquiry.product!.title}</TableCell>
                   <TableCell>{enquiry.name}</TableCell>
                   <TableCell>{enquiry.email}</TableCell>
                   <TableCell>
@@ -132,16 +138,16 @@ const EnquiriesSection = ({ enquiries, categories }: { enquiries: Enquiry[]; cat
                       </DialogTrigger>
                       <DialogContent className="max-w-3xl">
                         <DialogHeader>
-                          <DialogTitle>Enquiry for {enquiry.product.title}</DialogTitle>
+                          <DialogTitle>Enquiry for {enquiry.product!.title}</DialogTitle>
                         </DialogHeader>
                         <hr className="my-1" />
                         <DialogDescription asChild>
                           <div className="grid grid-cols-2 gap-4">
                             <p>
-                              <strong>Product:</strong> {enquiry.product.title}
+                              <strong>Product:</strong> {enquiry.product!.title}
                             </p>
                             <p>
-                              <strong>Category:</strong> {enquiry.product.category?.name}
+                              <strong>Category:</strong> {enquiry.product!.category?.name}
                             </p>
                             <p>
                               <strong>Name of enquirer:</strong> {enquiry.name}

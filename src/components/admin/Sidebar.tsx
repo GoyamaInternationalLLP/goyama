@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { logoutUser } from "@/lib/api";
 import { authUtils } from "@/lib/auth";
 import { FolderOpen, KeyRound, LayoutDashboard, LogOut, Package, User } from "lucide-react";
 import Link from "next/link";
@@ -10,6 +9,7 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { LuPackageSearch } from "react-icons/lu";
 import { FaPhone, FaPhoneAlt } from "react-icons/fa";
+import { logoutUser } from "@/actions/auth";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -18,14 +18,21 @@ const Sidebar = () => {
   const { user } = useAuth();
 
   const handleLogout = async () => {
+    const loadingToast = toast.loading("Logging out...");
     try {
-      await logoutUser();
-      authUtils.clearAuth();
-      router.push("/admin/login");
-      toast.success("Logout successful");
+      const response = await logoutUser();
+      if (response.success) {
+        authUtils.clearAuth();
+        router.push("/admin/login");
+        toast.success("Logout successful");
+      } else {
+        toast.error(response.error || "Failed to logout");
+      }
     } catch (error: any) {
       console.error("Failed to logout:", error);
       toast.error(error.response?.data?.error || "Failed to logout");
+    } finally {
+      toast.dismiss(loadingToast);
     }
   };
 

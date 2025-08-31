@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { FaAngleDown } from "react-icons/fa";
 import { Category } from "../../types";
-import { fetchCategories } from "@/lib/api";
+import { getCategories } from "@/actions/categories";
 
 const Navbar: React.FC = () => {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
@@ -25,9 +25,9 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetchCategories();
+      const res = await getCategories();
       console.log(res);
-      setCategories(res);
+      if (res.success && res.data) setCategories(res.data.categories);
     };
     fetchData();
   }, []);

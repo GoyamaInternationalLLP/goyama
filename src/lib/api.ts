@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { authUtils, verifyToken } from "./auth";
 
 // Base API configuration
-const BASE_URL = process.env.NODE_ENV === "production" ? "https://your-domain.com" : "http://localhost:3000";
+const BASE_URL = process.env.NODE_ENV === "production" ? "http://localhost:3000" : "http://localhost:3000";
 
 // Create axios instance with default config
 const apiClient = axios.create({
@@ -10,7 +10,7 @@ const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 10000, // 10 seconds timeout
+  timeout: 20000, // 10 seconds timeout
   withCredentials: true,
 });
 
@@ -36,109 +36,6 @@ async function apiRequest(endpoint: string, options?: AxiosRequestConfig) {
   }
 }
 
-// Categories API functions
-export const fetchCategories = async (params?: { page?: number; limit?: number }) => {
-  return apiRequest("/api/categories", {
-    method: "GET",
-    params: params,
-  });
-};
-
-export const fetchCategoryById = async (id: string) => {
-  return apiRequest(`/api/categories/${id}`);
-};
-
-// Products API functions
-export const fetchProducts = async (params?: { categoryId?: string; page?: number; limit?: number }) => {
-  return apiRequest("/api/products", {
-    method: "GET",
-    params: params,
-  });
-};
-
-export const fetchProductsByCategory = async (slug: string, page = 1, limit = 10) => {
-  return apiRequest(`/api/products/category/${slug}`, {
-    method: "GET",
-    params: { page, limit },
-  });
-};
-
-export const fetchProductById = async (id: string) => {
-  return apiRequest(`/api/products/${id}`);
-};
-
-// Auth API functions
-export const loginUser = async (email: string, password: string) => {
-  return apiRequest("/api/auth", {
-    method: "POST",
-    data: {
-      action: "login",
-      email,
-      password,
-    },
-  });
-};
-
-// Updated auth functions to handle cookies
-export const logoutUser = async () => {
-  return apiRequest("/api/auth", {
-    method: "POST",
-    data: { action: "logout" },
-  });
-};
-
-export const registerUser = async (name: string, email: string, password: string) => {
-  return apiRequest("/api/auth", {
-    method: "POST",
-    data: {
-      action: "register",
-      name,
-      email,
-      password,
-    },
-  });
-};
-
-export const createProduct = async (productData: any) => {
-  return apiRequest("/api/products", {
-    method: "POST",
-    data: productData,
-  });
-};
-
-export const updateProduct = async (id: string, productData: any) => {
-  return apiRequest(`/api/products/${id}`, {
-    method: "PUT",
-    data: productData,
-  });
-};
-
-export const deleteProduct = async (id: string) => {
-  return apiRequest(`/api/products/${id}`, {
-    method: "DELETE",
-  });
-};
-
-export const createCategory = async (categoryData: any) => {
-  return apiRequest("/api/categories", {
-    method: "POST",
-    data: categoryData,
-  });
-};
-
-export const updateCategory = async (id: string, categoryData: any) => {
-  return apiRequest(`/api/categories/${id}`, {
-    method: "PUT",
-    data: categoryData,
-  });
-};
-
-export const deleteCategory = async (id: string) => {
-  return apiRequest(`/api/categories/${id}`, {
-    method: "DELETE",
-  });
-};
-
 export const uploadFile = async (file: File, folder: string = "goyama") => {
   const formData = new FormData();
   formData.append("file", file);
@@ -150,52 +47,5 @@ export const uploadFile = async (file: File, folder: string = "goyama") => {
     headers: {
       "Content-Type": "multipart/form-data",
     },
-  });
-};
-
-export const updateUserPassword = async (id: string, password: string) => {
-  return apiRequest(`/api/users/${id}`, {
-    method: "PATCH",
-    data: { password },
-  });
-};
-
-export const fetchEnquiries = async (params?: { page?: number; limit?: number }) => {
-  return apiRequest("/api/enquiries", {
-    method: "GET",
-    params: params,
-  });
-};
-
-export const createEnquiry = async (enquiryData: any) => {
-  return apiRequest("/api/enquiries", {
-    method: "POST",
-    data: enquiryData,
-  });
-};
-
-export const deleteEnquiry = async (id: string) => {
-  return apiRequest(`/api/enquiries/${id}`, {
-    method: "DELETE",
-  });
-};
-
-export const fetchContacts = async (params?: { page?: number; limit?: number }) => {
-  return apiRequest("/api/contact", {
-    method: "GET",
-    params: params,
-  });
-};
-
-export const createContact = async (contactData: any) => {
-  return apiRequest("/api/contact", {
-    method: "POST",
-    data: contactData,
-  });
-};
-
-export const deleteContact = async (id: string) => {
-  return apiRequest(`/api/contact/${id}`, {
-    method: "DELETE",
   });
 };

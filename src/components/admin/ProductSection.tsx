@@ -2,7 +2,6 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { deleteProduct } from "@/lib/api";
 import { Edit, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -12,6 +11,8 @@ import { Input } from "../ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "../LoadingSpinner";
+import Image from "next/image";
+import { deleteProduct } from "@/actions/products";
 
 const ProductSection = ({ products, categories }: { products: Product[]; categories: Category[] }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,22 +20,28 @@ const ProductSection = ({ products, categories }: { products: Product[]; categor
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch =
-      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || product.categoryId === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredProducts = Array.isArray(products)
+    ? products.filter((product) => {
+        const matchesSearch =
+          product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !selectedCategory || product.categoryId === selectedCategory;
+        return matchesSearch && matchesCategory;
+      })
+    : [];
 
   const handleDelete = async (productId: string) => {
     const confirmed = confirm("Are you sure you want to delete this product?");
     if (confirmed) {
       try {
         setLoading(true);
-        await deleteProduct(productId);
-        toast.success("Product deleted successfully");
-        router.refresh();
+        const res = await deleteProduct(productId);
+        if (res.success) {
+          toast.success("Product deleted successfully");
+          router.refresh();
+        } else {
+          toast.error(res.error || "Failed to delete product");
+        }
       } catch (error: any) {
         console.error("Failed to delete product:", error);
         toast.error(error.response?.data?.error || "Failed to delete product");
@@ -76,14 +83,15 @@ const ProductSection = ({ products, categories }: { products: Product[]; categor
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((category) => (
-              <SelectItem
-                key={category.id}
-                value={category.id}
-              >
-                {category.name}
-              </SelectItem>
-            ))}
+            {Array.isArray(categories) &&
+              categories.map((category) => (
+                <SelectItem
+                  key={category.id}
+                  value={category.id}
+                >
+                  {category.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>
@@ -105,10 +113,12 @@ const ProductSection = ({ products, categories }: { products: Product[]; categor
                 <TableCell>
                   <div className="flex items-center">
                     {product.images && product.images[0] ? (
-                      <img
+                      <Image
                         src={product.images[0]}
                         alt={product.title}
                         className="w-16 h-16 object-cover rounded-md mr-4"
+                        width={64}
+                        height={64}
                       />
                     ) : (
                       <div className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded-md mr-4">

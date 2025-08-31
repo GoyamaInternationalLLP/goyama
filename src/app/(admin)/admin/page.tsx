@@ -1,39 +1,51 @@
-import { fetchCategories, fetchContacts, fetchEnquiries, fetchProducts } from "@/lib/api";
+import { getCategories } from "@/actions/categories";
+import { getContacts } from "@/actions/contact";
+import { getEnquiries } from "@/actions/enquiries";
+import { getProducts } from "@/actions/products";
 import { FolderOpen, Package } from "lucide-react";
-import { Category, Contact, Enquiry, Product } from "../../../../types";
-import { LuPackageSearch } from "react-icons/lu";
 import { FaPhoneAlt } from "react-icons/fa";
+import { LuPackageSearch } from "react-icons/lu";
+import { Category, Contact, Enquiry, Product } from "../../../../types";
 
 export default async function AdminDashboard() {
-  const [products, categories, enquiries, contacts] = await Promise.all([
-    fetchProducts({ limit: 5 }),
-    fetchCategories({ limit: 5 }),
-    fetchEnquiries({ limit: 5 }),
-    fetchContacts({ limit: 5 }),
+  const [prodRes, catRes, enqRes, conRes] = await Promise.all([
+    getProducts({ limit: 5 }),
+    getCategories({ limit: 5 }),
+    getEnquiries({ limit: 5 }),
+    getContacts({ limit: 5 }),
   ]);
+
+  if (!prodRes.success || !catRes.success || !enqRes.success || !conRes.success) {
+    return <div className="mt-4 text-red-600">Failed to load data</div>;
+  }
+
+  const products = prodRes.data?.products ?? [];
+  const categories = catRes.data?.categories ?? [];
+  const enquiries = enqRes.data?.enquiries ?? [];
+  const contacts = conRes.data?.contacts ?? [];
 
   const statCards = [
     {
       title: "Total Products",
-      value: products.products?.length || 0,
+      value: Array.isArray(products) ? products.length : 0,
       icon: Package,
       color: "bg-blue-500",
     },
     {
       title: "Total Categories",
-      value: categories.length || 0,
+      value: Array.isArray(categories) ? categories.length : 0,
       icon: FolderOpen,
       color: "bg-green-500",
     },
     {
       title: "Total Enquiries",
-      value: enquiries.length || 0,
+      value: Array.isArray(enquiries) ? enquiries.length : 0,
       icon: LuPackageSearch,
       color: "bg-yellow-500",
     },
     {
       title: "Total Contact Us Requests",
-      value: contacts.length || 0,
+      value: Array.isArray(contacts) ? contacts.length : 0,
       icon: FaPhoneAlt,
       color: "bg-red-500",
     },
@@ -84,9 +96,9 @@ export default async function AdminDashboard() {
             <h3 className="text-lg font-medium text-gray-900">Recent Products</h3>
           </div>
           <div className="p-6">
-            {products.products.length > 0 ? (
+            {Array.isArray(products) && products.length > 0 ? (
               <div className="space-y-4">
-                {products.products.map((product: Product) => (
+                {products.map((product: Product) => (
                   <div
                     key={product.id}
                     className="flex items-center space-x-4"
@@ -117,7 +129,7 @@ export default async function AdminDashboard() {
             <h3 className="text-lg font-medium text-gray-900">Recent Categories</h3>
           </div>
           <div className="p-6">
-            {categories.length > 0 ? (
+            {Array.isArray(categories) && categories.length > 0 ? (
               <div className="space-y-4">
                 {categories.map((category: Category) => (
                   <div
@@ -150,7 +162,7 @@ export default async function AdminDashboard() {
             <h3 className="text-lg font-medium text-gray-900">Recent Product Enquiries</h3>
           </div>
           <div className="p-6">
-            {enquiries.length > 0 ? (
+            {Array.isArray(enquiries) && enquiries.length > 0 ? (
               <div className="space-y-4">
                 {enquiries.map((enquiry: Enquiry) => (
                   <div
@@ -158,8 +170,8 @@ export default async function AdminDashboard() {
                     className="flex items-center space-x-4"
                   >
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{enquiry.product.title}</p>
-                      <p className="text-sm text-gray-500">{enquiry.product.category?.name}</p>
+                      <p className="text-sm font-medium text-gray-900">{enquiry.product!.title}</p>
+                      <p className="text-sm text-gray-500">{enquiry.product!.category?.name}</p>
                     </div>
                   </div>
                 ))}
@@ -176,7 +188,7 @@ export default async function AdminDashboard() {
             <h3 className="text-lg font-medium text-gray-900">Recent Contact Us Requests</h3>
           </div>
           <div className="p-6">
-            {contacts.length > 0 ? (
+            {Array.isArray(contacts) && contacts.length > 0 ? (
               <div className="space-y-4">
                 {contacts.map((contact: Contact) => (
                   <div

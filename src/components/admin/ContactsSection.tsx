@@ -8,7 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { deleteContact } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { Search, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -20,26 +19,33 @@ import LoadingSpinner from "../LoadingSpinner";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { deleteContact } from "@/actions/contact";
 
 const ContactsSection = ({ contacts }: { contacts: Contact[] }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const filteredContacts = contacts.filter(
-    (contact) =>
-      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.message.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredContacts = Array.isArray(contacts)
+    ? contacts.filter(
+        (contact) =>
+          contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          contact.message.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this contact?")) {
       try {
         setLoading(true);
-        await deleteContact(id);
-        toast.success("Contact deleted successfully");
-        router.refresh();
+        const res = await deleteContact(id);
+        if (!res.success) {
+          toast.error(res.error || "Failed to delete contact");
+        } else {
+          toast.success("Contact deleted successfully");
+          router.refresh();
+        }
       } catch (error: any) {
         console.error("Failed to delete Contact:", error);
         toast.error(error.response?.data?.error || "Failed to delete Contact");

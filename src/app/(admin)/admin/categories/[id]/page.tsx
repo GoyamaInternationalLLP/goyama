@@ -1,5 +1,5 @@
+import { getCategoryById } from "@/actions/categories";
 import CategoryForm from "@/components/admin/CategoryForm";
-import { fetchCategoryById } from "@/lib/api";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,8 +12,14 @@ import {
 const UpdateCategoryPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
-  let category;
-  if (id) category = await fetchCategoryById(id);
+  let catRes;
+  if (id) catRes = await getCategoryById(id);
+
+  if (!catRes?.success) {
+    return <div className="mt-4 text-red-600">Failed to load category</div>;
+  }
+
+  const category = catRes.data;
 
   return (
     <div>

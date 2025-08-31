@@ -1,16 +1,18 @@
-import ImageSlider from "@/components/ui/image-slider";
-import Camp from "../../components/Camp";
-import FeaturesSection from "../../components/FeaturesSection";
-import Guide from "../../components/Guide";
-import Hero from "../../components/Hero";
-import HeroSlider from "@/components/ui/HeroSlider";
-import HomeWhoWeAreSection from "@/components/HomeWhoWeAreSection";
 import DownloadBrochureSection from "@/components/DownloadBrochureSection";
-import { fetchCategories } from "@/lib/api";
+import HomeWhoWeAreSection from "@/components/HomeWhoWeAreSection";
 import { Category } from "../../../types";
+import FeaturesSection from "../../components/FeaturesSection";
+import Hero from "../../components/Hero";
+import { getCategories } from "@/actions/categories";
 
 export default async function Home() {
-  const categories = (await fetchCategories()) as Category[];
+  const catRes = await getCategories();
+
+  if (!catRes.success) {
+    return <div className="mt-4 text-red-600">Failed to load categories</div>;
+  }
+
+  const categories = catRes.data?.categories ?? [];
 
   return (
     <>

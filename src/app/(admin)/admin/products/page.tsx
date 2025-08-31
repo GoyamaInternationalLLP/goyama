@@ -1,11 +1,18 @@
+import { getCategories } from "@/actions/categories";
+import { getProducts } from "@/actions/products";
 import ProductSection from "@/components/admin/ProductSection";
-import { fetchCategories, fetchProducts } from "@/lib/api";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
 const ProductsPage = async () => {
-  const productsResponse = await fetchProducts();
-  const categories = await fetchCategories();
+  const [prodRes, catRes] = await Promise.all([getProducts(), getCategories()]);
+
+  if (!prodRes.success || !catRes.success) {
+    return <div className="mt-4 text-red-600">Failed to load products or categories</div>;
+  }
+
+  const products = prodRes.data?.products ?? [];
+  const categories = catRes.data?.categories ?? [];
 
   return (
     <div>
@@ -23,10 +30,14 @@ const ProductsPage = async () => {
         </Link>
       </div>
 
-      <ProductSection
-        products={productsResponse.products}
-        categories={categories}
-      />
+      {products.length ? (
+        <ProductSection
+          products={products ?? []}
+          categories={categories ?? []}
+        />
+      ) : (
+        <div className="mt-4 text-gray-600">No products found</div>
+      )}
     </div>
   );
 };

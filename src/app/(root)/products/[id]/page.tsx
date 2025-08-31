@@ -1,20 +1,42 @@
-import { fetchProductById } from "@/lib/api";
-import { Product } from "../../../../../types";
-import ProductMediaSlider, { MediaItem, MediaSliderProps } from "@/components/ProductMediaSlider";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { TbHandFinger } from "react-icons/tb";
+import { getProductById } from "@/actions/products";
 import EnquireProductForm from "@/components/EnquireProductForm";
+import ProductMediaSlider from "@/components/ProductMediaSlider";
+import Image from "next/image";
+
+type ProductDetail = {
+  category: {
+    name: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    slug: string;
+    description: string | null;
+    isActive: boolean;
+    imageUrl: string | null;
+  };
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  slug: string;
+  title: string;
+  description: string | null;
+  categoryId: string;
+  isActive: boolean;
+  images: string[];
+  videos: string[];
+};
 
 const ProductDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
-  let product: Product | null = null;
-  if (id) product = await fetchProductById(id);
+  let prodRes;
+  if (id) prodRes = await getProductById(id);
 
-  if (!id || !product) {
+  if (!prodRes?.success || !prodRes.data) {
     return <div>Product not found</div>;
   }
+
+  const product: ProductDetail = prodRes.data;
 
   const media = [
     ...(product.images?.map((url) => ({ url, type: "image" })) || []),

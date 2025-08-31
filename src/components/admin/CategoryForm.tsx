@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createCategory, updateCategory, uploadFile } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileImage, Image as ImageIcon, Upload, X } from "lucide-react";
@@ -16,6 +15,8 @@ import { Category } from "../../../types";
 import { Textarea } from "../ui/textarea";
 import { toast } from "sonner";
 import LoadingSpinner from "../LoadingSpinner";
+import { createCategory, updateCategory } from "@/actions/categories";
+import { uploadFile } from "@/lib/api";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -40,7 +41,7 @@ interface ImageUploadProps {
   value?: File;
   onChange: (file: File | undefined) => void;
   disabled?: boolean;
-  existingImageUrl?: string;
+  existingImageUrl: string | null;
 }
 
 const ImageUpload = ({ value, onChange, disabled, existingImageUrl }: ImageUploadProps) => {
@@ -295,11 +296,19 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
 
       if (type === "create") {
         response = await createCategory(submitData);
-        toast.success("Category created successfully");
-        form.reset();
+        if (!response.success) {
+          toast.error(response.error || "Failed to create category");
+        } else {
+          toast.success("Category created successfully");
+          form.reset();
+        }
       } else {
         response = await updateCategory(categoryData!.id, submitData);
-        toast.success("Category updated successfully");
+        if (!response.success) {
+          toast.error(response.error || "Failed to update category");
+        } else {
+          toast.success("Category updated successfully");
+        }
       }
 
       console.log(response);
@@ -409,7 +418,7 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
                         value={value}
                         onChange={onChange}
                         disabled={isSubmitting}
-                        existingImageUrl={categoryData?.imageUrl}
+                        existingImageUrl={categoryData ? categoryData.imageUrl : ""}
                         {...field}
                       />
                     </FormControl>

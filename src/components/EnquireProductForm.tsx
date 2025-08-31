@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createEnquiry } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,6 +23,7 @@ import { toast } from "sonner";
 import { Product } from "../../types";
 import LoadingSpinner from "./LoadingSpinner";
 import { Textarea } from "./ui/textarea";
+import { createEnquiry } from "@/actions/enquiries";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -59,7 +59,7 @@ const EnquireProductForm = ({ product }: { product: Product }) => {
         toast.success("Enquiry submitted successfully!");
         form.reset();
       } else {
-        toast.error("Failed to submit enquiry.");
+        toast.error(res.error || "Failed to submit enquiry.");
       }
       setOpen(false);
     } catch (error: any) {

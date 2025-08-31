@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginUser } from "@/lib/api";
 import { authUtils } from "@/lib/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
@@ -13,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import LoadingSpinner from "../LoadingSpinner";
+import { loginUser } from "@/actions/auth";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -45,13 +45,13 @@ const AdminLoginForm = () => {
     try {
       const response = await loginUser(values.email, values.password);
 
-      if (response.success && response.user.role === "ADMIN") {
+      if (response.success && response.user && response.user.role === "ADMIN") {
         authUtils.setAuthCookies(response.token, response.user.role);
         localStorage.setItem("user", JSON.stringify(response.user));
         router.push("/admin");
         toast.success("Login successful");
       } else {
-        toast.error("You do not have admin access");
+        toast.error(response.error || "Login failed");
       }
     } catch (error: any) {
       console.log(error.response?.data?.error || "Login failed");

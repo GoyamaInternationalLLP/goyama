@@ -1,11 +1,11 @@
 "use client";
-
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { createProduct, fetchCategories, updateProduct, uploadFile } from "@/lib/api";
+import { uploadFile } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image as ImageIcon, Plus, Trash2, Upload, Video, X } from "lucide-react";
@@ -13,22 +13,26 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
-import { Product } from "../../../types";
+import { set, z } from "zod";
+import { Category, Product } from "../../../types";
 import { toast } from "sonner";
 import LoadingSpinner from "../LoadingSpinner";
+import { getCategories } from "@/actions/categories";
+import { createProduct, updateProduct } from "@/actions/products";
 
-// Types
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
+const loadHeic2any = async () => (await import("heic2any")).default;
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const MAX_IMAGE_SIZE = 100 * 1024 * 1024; // 100MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "images/heic"] as const;
-const ACCEPTED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/ogg"] as const;
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+] as const;
+const ACCEPTED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/ogg", "video/hevc", "video/mov", "video/avi"] as const;
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -68,9 +72,10 @@ interface ImageUploadProps {
   disabled?: boolean;
   existingImageUrl?: string;
   onRemove?: () => void;
+  setIsSubmitting: (isSubmitting: boolean) => void;
 }
 
-const ImageUpload = ({ value, onChange, disabled, existingImageUrl, onRemove }: ImageUploadProps) => {
+const ImageUpload = ({ value, onChange, disabled, existingImageUrl, onRemove, setIsSubmitting }: ImageUploadProps) => {
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [hasNewImage, setHasNewImage] = useState(false);
@@ -119,15 +124,37 @@ const ImageUpload = ({ value, onChange, disabled, existingImageUrl, onRemove }: 
   );
 
   const handleFileSelect = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (disabled) return;
 
       const files = e.target.files;
       if (files && files[0]) {
-        const file = files[0];
-        if (ACCEPTED_IMAGE_TYPES.includes(file.type as any) && file.size <= MAX_IMAGE_SIZE) {
-          onChange(file);
-          setHasNewImage(true);
+        let file = files[0];
+
+        try {
+          setIsSubmitting(true);
+          // Check HEIC
+          if (file.type === "image/heic" || file.type === "image/heif" || file.name.toLowerCase().endsWith(".heic")) {
+            const heic2any = await loadHeic2any();
+            const convertedBlob = await heic2any({ blob: file, toType: "image/jpeg" });
+            file = new File([convertedBlob as Blob], file.name.replace(/\.heic$/i, ".jpg"), {
+              type: "image/jpeg",
+            });
+            console.log("Converted HEIC → JPEG:", file);
+          }
+
+          // Validate after conversion
+          if (ACCEPTED_IMAGE_TYPES.includes(file.type as any) && file.size <= MAX_IMAGE_SIZE) {
+            onChange(file);
+            setHasNewImage(true);
+          } else {
+            toast.error("Unsupported file type or size too large");
+          }
+        } catch (err) {
+          console.error("HEIC conversion error:", err);
+          toast.error("Failed to convert HEIC image. Please try another file.");
+        } finally {
+          setIsSubmitting(false);
         }
       }
     },
@@ -157,7 +184,7 @@ const ImageUpload = ({ value, onChange, disabled, existingImageUrl, onRemove }: 
           >
             <input
               type="file"
-              accept="image/*"
+              accept="image/*,.heic,.heif"
               onChange={handleFileSelect}
               disabled={disabled}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
@@ -165,7 +192,7 @@ const ImageUpload = ({ value, onChange, disabled, existingImageUrl, onRemove }: 
             <div className="text-center">
               <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
               <p className="text-sm text-gray-600">Upload Image</p>
-              <p className="text-xs text-gray-400">PNG, JPG, GIF, WEBP up to 5MB</p>
+              <p className="text-xs text-gray-400">PNG, JPG, GIF, WEBP, HEIC up to 5MB</p>
             </div>
           </div>
           {onRemove && (
@@ -214,7 +241,7 @@ const ImageUpload = ({ value, onChange, disabled, existingImageUrl, onRemove }: 
             <div className="relative flex-1">
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*,.heic,.heif"
                 onChange={handleFileSelect}
                 disabled={disabled}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
@@ -353,7 +380,7 @@ const VideoUpload = ({ value, onChange, disabled, existingVideoUrl, onRemove }: 
           <div className="text-center">
             <Video className="mx-auto h-8 w-8 text-gray-400 mb-2" />
             <p className="text-sm text-gray-600">Upload Video</p>
-            <p className="text-xs text-gray-400">MP4, WEBM, OGG up to 10MB</p>
+            <p className="text-xs text-gray-400">MP4, WEBM, OGG, HEVC, MOV, AVI up to 10MB</p>
           </div>
         </div>
       ) : (
@@ -476,8 +503,9 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const categoriesData = await fetchCategories();
-        setCategories(categoriesData);
+        const catRes = await getCategories();
+        if (!catRes.success) throw new Error("Failed to fetch categories");
+        if (catRes.success && catRes.data) setCategories(catRes.data?.categories);
       } catch (error) {
         console.error("Failed to load categories:", error);
       }
@@ -489,7 +517,7 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
   // Auto-generate slug from title
   const watchTitle = form.watch("title");
   useEffect(() => {
-    if (watchTitle && type === "create") {
+    if (watchTitle) {
       const slug = watchTitle
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, "")
@@ -546,23 +574,29 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
         description: values.description,
         categoryId: values.categoryId,
         isActive: values.isActive,
-        images: imageUploads.filter(Boolean),
-        videos: videoUploads.filter(Boolean),
+        images: imageUploads.filter(Boolean).map((img) => img!.imageUrl),
+        videos: videoUploads.filter(Boolean).map((vid) => vid!.videoUrl),
       };
 
       let response;
       if (type === "create") {
         response = await createProduct(submitData);
-        form.reset();
-        toast.success("Product created successfully");
+        if (response.success) {
+          form.reset();
+          toast.success("Product created successfully");
+          router.push("/admin/products");
+        } else {
+          toast.error(response.error || "Failed to create product");
+        }
       } else {
         response = await updateProduct(productData!.id, submitData);
-        toast.success("Product updated successfully");
-      }
-
-      console.log(response);
-      if (response) {
-        router.push("/admin/products");
+        if (response.success) {
+          form.reset();
+          toast.success("Product updated successfully");
+          router.push("/admin/products");
+        } else {
+          toast.error(response.error || "Failed to update product");
+        }
       }
     } catch (error: any) {
       console.error("Error submitting form:", error);
@@ -746,6 +780,7 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
                             disabled={isSubmitting}
                             existingImageUrl={formField.value.existingUrl}
                             onRemove={imageFields.length > 1 ? () => removeImage(index) : undefined}
+                            setIsSubmitting={setIsSubmitting}
                           />
                         </FormControl>
                         <FormMessage />

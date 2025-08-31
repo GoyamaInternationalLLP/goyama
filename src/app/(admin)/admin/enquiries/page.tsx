@@ -1,8 +1,16 @@
+import { getCategories } from "@/actions/categories";
+import { getEnquiries } from "@/actions/enquiries";
 import EnquiriesSection from "@/components/admin/EnquiriesSection";
-import { fetchCategories, fetchEnquiries } from "@/lib/api";
 
 const EnquiriesPage = async () => {
-  const [enquiries, categories] = await Promise.all([fetchEnquiries(), fetchCategories()]);
+  const [enqRes, catRes] = await Promise.all([getEnquiries(), getCategories()]);
+
+  if (!enqRes.success || !catRes.success) {
+    return <div className="mt-4 text-red-600">Failed to load enquiries or categories</div>;
+  }
+
+  const enquiries = enqRes.data?.enquiries ?? [];
+  const categories = catRes.data?.categories ?? [];
 
   return (
     <div>
@@ -16,8 +24,8 @@ const EnquiriesPage = async () => {
         <div className="mt-4 text-gray-600">No enquiries found</div>
       ) : (
         <EnquiriesSection
-          enquiries={enquiries}
-          categories={categories}
+          enquiries={enquiries ?? []}
+          categories={categories ?? []}
         />
       )}
     </div>

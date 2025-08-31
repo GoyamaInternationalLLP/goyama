@@ -1,34 +1,33 @@
 export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  imageUrl?: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-  products?: Product[];
-  _count?: {
+  _count: {
     products: number;
   };
+  name: string;
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  description: string | null;
+  slug: string;
+  imageUrl: string | null;
+  isActive: boolean;
 }
 
 export interface Product {
   id: string;
+  createdAt: Date;
+  updatedAt: Date;
   title: string;
   slug: string;
-  description?: string;
+  description: string | null;
   categoryId: string;
   isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  images: string[];
+  videos: string[];
   category?: {
     id: string;
     name: string;
     slug: string;
   };
-  images?: string[];
-  videos?: string[];
 }
 
 // export interface ProductImage {
@@ -48,22 +47,32 @@ export interface Product {
 // }
 
 export interface Enquiry {
-  id: string;
   name: string;
+  id: string;
   email: string;
+  createdAt: Date;
   message: string;
-  createdAt: string;
-  product: Product;
   productId: string;
+  product?: {
+    id: string;
+    title: string;
+    slug: string;
+    category: {
+      id: string;
+      name: string;
+      slug: string;
+    };
+  };
 }
 
 export interface Contact {
-  id: string;
   name: string;
+  id: string;
   email: string;
+  createdAt: Date;
   message: string;
+  organizationName: string;
   contactNumber: string;
-  createdAt: string;
 }
 
 export interface User {

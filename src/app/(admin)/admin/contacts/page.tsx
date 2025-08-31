@@ -1,8 +1,14 @@
+import { getContacts } from "@/actions/contact";
 import ContactsSection from "@/components/admin/ContactsSection";
-import { fetchContacts } from "@/lib/api";
 
 const ContactUsReqsPage = async () => {
-  const contacts = await fetchContacts();
+  const res = await getContacts();
+
+  if (!res.success) {
+    return <div className="mt-4 text-red-600">Failed to load contacts</div>;
+  }
+
+  const contacts = res.data?.contacts ?? [];
 
   return (
     <div>
@@ -15,7 +21,7 @@ const ContactUsReqsPage = async () => {
       {contacts.length === 0 ? (
         <div className="mt-4 text-gray-600">No contact requests found</div>
       ) : (
-        <ContactsSection contacts={contacts} />
+        <ContactsSection contacts={contacts ?? []} />
       )}
     </div>
   );

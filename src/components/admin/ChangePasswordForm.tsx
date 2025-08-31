@@ -8,10 +8,10 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { updateUserPassword } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import LoadingSpinner from "../LoadingSpinner";
+import { updateUserPassword } from "@/actions/users";
 
 const formSchema = z
   .object({
@@ -50,6 +50,8 @@ const ChangePasswordForm = () => {
       if (res.success) {
         form.reset();
         toast.success("Password updated successfully");
+      } else {
+        toast.error(res.error || "Failed to update password");
       }
     } catch (error: any) {
       console.log(error);

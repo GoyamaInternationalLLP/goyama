@@ -3,6 +3,7 @@
 import React from "react";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { Product } from "../../types";
+import Image from "next/image";
 
 const ProductCard = ({ product }: { product: Product }) => {
   return (
@@ -15,10 +16,10 @@ const ProductCard = ({ product }: { product: Product }) => {
           translateZ="100"
           className="w-full mt-4"
         >
-          <img
+          <Image
             src={product.images![0]}
-            height="1000"
-            width="1000"
+            height={1000}
+            width={1000}
             className="h-72 w-full object-cover rounded-xl group-hover/card:shadow-xl"
             alt="thumbnail"
           />

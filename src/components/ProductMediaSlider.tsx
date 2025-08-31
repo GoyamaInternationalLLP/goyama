@@ -3,8 +3,7 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Lens } from "@/components/magicui/lens";
-import HeroVideoDialog from "./magicui/hero-video-dialog";
+import Image from "next/image";
 
 export interface MediaItem {
   url: string;
@@ -59,10 +58,12 @@ export default function ProductMediaSlider({ media }: MediaSliderProps) {
               className="absolute w-full h-full flex items-center justify-center"
             >
               {media[current].type === "image" ? (
-                <img
+                <Image
                   src={media[current].url}
                   alt="media item"
                   className="w-full h-full object-contain"
+                  width={1000}
+                  height={1000}
                 />
               ) : (
                 <video

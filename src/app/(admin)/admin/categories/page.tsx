@@ -1,10 +1,16 @@
+import { getCategories } from "@/actions/categories";
 import { CategoriesSection } from "@/components/admin/CategoriesSection";
-import { fetchCategories } from "@/lib/api";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
 const CategoriesPage = async () => {
-  const categories = await fetchCategories();
+  const res = await getCategories();
+
+  if (!res.success) {
+    return <div className="mt-4 text-red-600">Failed to load categories</div>;
+  }
+
+  const categories = res.data?.categories ?? [];
 
   return (
     <div>
@@ -24,7 +30,7 @@ const CategoriesPage = async () => {
       {categories.length === 0 ? (
         <div className="mt-4 text-gray-600">No categories found</div>
       ) : (
-        <CategoriesSection categories={categories} />
+        <CategoriesSection categories={categories ?? []} />
       )}
     </div>
   );

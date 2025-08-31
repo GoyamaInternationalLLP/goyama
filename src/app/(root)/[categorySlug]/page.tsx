@@ -1,23 +1,34 @@
-import { fetchProductsByCategory } from "@/lib/api";
 import { Category, Product } from "../../../../types";
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
+import { getProductsByCategorySlug } from "@/actions/products";
+
+type CatProps = {
+  id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  slug: string;
+  description: string | null;
+  isActive: boolean;
+  imageUrl: string | null;
+};
 
 const ProductsPage = async ({ params }: { params: Promise<{ categorySlug: string }> }) => {
   const { categorySlug } = await params;
 
   let productResponse;
   if (categorySlug) {
-    productResponse = await fetchProductsByCategory(categorySlug);
+    productResponse = await getProductsByCategorySlug(categorySlug);
   }
 
-  if (!productResponse) {
+  if (!productResponse?.success) {
     return <div>No products found for category: {categorySlug}</div>;
   }
 
-  const products: Product[] = productResponse.products;
-  const categoryDetails: Category = productResponse.category;
+  const products: Product[] = productResponse.data?.products || [];
+  const categoryDetails: CatProps | null = productResponse.data?.category || null;
 
   if (!categoryDetails) {
     return <div>No category found for slug: {categorySlug}</div>;
