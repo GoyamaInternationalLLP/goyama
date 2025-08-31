@@ -37,7 +37,7 @@ const DownloadBrochureSection = () => {
 
   return (
     <motion.section
-      variants={slideIn("down")}
+      variants={slideIn("down", "tween", 0.4)}
       className="px-5 md:px-40 py-10 relative overflow-hidden"
     >
       {/* Decorative Background Elements */}

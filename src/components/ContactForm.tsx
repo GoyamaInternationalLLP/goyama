@@ -1,443 +1,208 @@
 "use client";
 
-import React, { useState } from "react";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Textarea } from "./ui/textarea";
+import { FaPhoneAlt } from "react-icons/fa";
+import Image from "next/image";
+import { toast } from "sonner";
+import { createContact } from "@/lib/api";
+import { useState } from "react";
+import LoadingSpinner from "./LoadingSpinner";
 
-type FormData = {
-  companyName: string;
-  firstName: string;
-  lastName: string;
-  street: string;
-  apt: string;
-  city: string;
-  state: string;
-  country: string;
-  zipCode: string;
-  phone: string;
-  email: string;
-  website: string;
-  comments: string;
-  customerTypes: string[];
-  otherCustomerType: string;
-  productInterests: string[];
-  otherProductInterest: string;
-  hearAbout: string;
+const formSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  organizationName: z.string().min(1, { message: "Organization name is required" }),
+  email: z.string().min(1, { message: "Email is required" }).email({ message: "Email is invalid" }),
+  contactNumber: z
+    .string()
+    .min(10, { message: "Contact number is required" })
+    .refine(
+      (value) => {
+        const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+        return phoneRegex.test(value);
+      },
+      { message: "Contact number is invalid" }
+    )
+    .refine(
+      (value) => {
+        return value.length >= 10 || value.length <= 15;
+      },
+      { message: "Contact number must be between 10 and 15 digits" }
+    ),
+  message: z.string().min(1, { message: "Message is required" }),
+});
+
+const ContactForm = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      organizationName: "",
+      email: "",
+      contactNumber: "",
+      message: "",
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      setIsSubmitting(true);
+      const res = await createContact(values);
+      if (res.success) {
+        toast.success("Contact created successfully!");
+        form.reset();
+      } else {
+        toast.error(res.error || "Something went wrong! Please try again.");
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.response?.data?.error || "Something went wrong! Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  return (
+    <div className="rounded-lg border shadow-lg mx-auto overflow-hidden h-[44rem] xl:h-[35rem]">
+      {isSubmitting && (
+        <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
+          <LoadingSpinner />
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full justify-between">
+        <div className="w-full p-6">
+          <div>
+            <h1 className="text-2xl font-bold">Contact Us</h1>
+            <p className="text-lg text-gray-50">We’d Love to Hear from You!</p>
+          </div>
+
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8 mt-5"
+            >
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your name"
+                          {...field}
+                          disabled={isSubmitting}
+                          required
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="organizationName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Organization Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your organization name"
+                          {...field}
+                          disabled={isSubmitting}
+                          required
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your email"
+                          {...field}
+                          disabled={isSubmitting}
+                          required
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contactNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your contact number"
+                          {...field}
+                          disabled={isSubmitting}
+                          required
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Message</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={4}
+                        placeholder="Enter your message"
+                        {...field}
+                        disabled={isSubmitting}
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                className="w-full bg-goyama-primary hover:bg-goyama-blue text-white"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Sending..." : "Send Message"}
+              </Button>
+            </form>
+          </Form>
+        </div>
+
+        <div className="w-full hidden items-center justify-center md:flex">
+          <Image
+            src="/contactus.png"
+            alt="Descriptive alt text"
+            width={600}
+            height={300}
+            className="w-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export default function ContactForm() {
-  const [formData, setFormData] = useState<FormData>({
-    companyName: "",
-    firstName: "",
-    lastName: "",
-    street: "",
-    apt: "",
-    city: "",
-    state: "",
-    country: "",
-    zipCode: "",
-    phone: "",
-    email: "",
-    website: "",
-    comments: "",
-    customerTypes: [],
-    otherCustomerType: "",
-    productInterests: [],
-    otherProductInterest: "",
-    hearAbout: "",
-  });
-  const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState<null | boolean>(null);
-
-  const isFormValid =
-    formData.companyName.trim() !== "" &&
-    formData.email.trim() !== "" &&
-    formData.phone.trim() !== "" &&
-    formData.country.trim() !== "" &&
-    formData.city.trim() !== "" &&
-    formData.zipCode.trim() !== "" &&
-    formData.customerTypes.length > 0 &&
-    formData.productInterests.length > 0;
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value, type } = e.currentTarget;
-    const checked = (e.currentTarget as HTMLInputElement).checked;
-
-    if (type === "checkbox") {
-      const key = name as "customerTypes" | "productInterests";
-      setFormData((prev) => {
-        const list = prev[key];
-        const updated = checked
-          ? [...list, value]
-          : list.filter((item) => item !== value);
-        return { ...prev, [key]: updated } as FormData;
-      });
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value } as FormData));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isFormValid) return;
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      if (!res.ok) throw new Error("Network error");
-      setSuccess(true);
-      setFormData({
-        companyName: "",
-        firstName: "",
-        lastName: "",
-        street: "",
-        apt: "",
-        city: "",
-        state: "",
-        country: "",
-        zipCode: "",
-        phone: "",
-        email: "",
-        website: "",
-        comments: "",
-        customerTypes: [],
-        otherCustomerType: "",
-        productInterests: [],
-        otherProductInterest: "",
-        hearAbout: "",
-      });
-    } catch {
-      setSuccess(false);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold underline text-center">Contact Us</h1>
-      <p className="text-gray-600">
-        We are pleased you are interested in learning more about our products….
-      </p>
-
-      {/* Personal & Address */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Company Name */}
-        <div>
-          <label htmlFor="companyName" className="block font-medium">
-            Company Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="companyName"
-            name="companyName"
-            value={formData.companyName}
-            onChange={handleChange}
-            placeholder="Company Name"
-            className="border rounded p-2 w-full"
-            required
-          />
-        </div>
-        {/* First & Last Name */}
-        <div className="flex gap-2">
-          <div className="w-1/2">
-            <label htmlFor="firstName" className="block font-medium">
-              First Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              placeholder="First Name"
-              className="border rounded p-2 w-full"
-              required
-            />
-          </div>
-          <div className="w-1/2">
-            <label htmlFor="lastName" className="block font-medium">
-              Last Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              placeholder="Last Name"
-              className="border rounded p-2 w-full"
-              required
-            />
-          </div>
-        </div>
-        {/* Street & Apt */}
-        <div>
-          <label htmlFor="street" className="block font-medium">
-            Street Address
-          </label>
-          <input
-            id="street"
-            name="street"
-            value={formData.street}
-            onChange={handleChange}
-            placeholder="Street Address"
-            className="border rounded p-2 w-full"
-          />
-        </div>
-        <div>
-          <label htmlFor="apt" className="block font-medium">
-            Apt, Suite, etc.
-          </label>
-          <input
-            id="apt"
-            name="apt"
-            value={formData.apt}
-            onChange={handleChange}
-            placeholder="Apt, Suite, etc."
-            className="border rounded p-2 w-full"
-          />
-        </div>
-        {/* City */}
-        <div>
-          <label htmlFor="city" className="block font-medium">
-            City <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="city"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            placeholder="City"
-            className="border rounded p-2 w-full"
-            required
-          />
-        </div>
-        {/* State */}
-        <div>
-          <label htmlFor="state" className="block font-medium">
-            State
-          </label>
-          <input
-            id="state"
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            placeholder="State"
-            className="border rounded p-2 w-full"
-            required
-          />
-        </div>
-        {/* Zip Code */}
-        <div>
-          <label htmlFor="zipCode" className="block font-medium">
-            Zip Code <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="zipCode"
-            name="zipCode"
-            value={formData.zipCode}
-            onChange={handleChange}
-            placeholder="Zip Code"
-            className="border rounded p-2 w-full"
-            required
-          />
-        </div>
-        {/* Country */}
-        <div>
-          <label htmlFor="country" className="block font-medium">
-            Country <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="country"
-            name="country"
-            value={formData.country}
-            onChange={handleChange}
-            placeholder="Country"
-            className="border rounded p-2 w-full"
-            required
-          />
-        </div>
-        {/* Phone */}
-        <div>
-          <label htmlFor="phone" className="block font-medium">
-            Phone <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="Phone"
-            className="border rounded p-2 w-full"
-            required
-          />
-        </div>
-        {/* Email */}
-        <div>
-          <label htmlFor="email" className="block font-medium">
-            Email <span className="text-red-500">*</span>
-          </label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email Address"
-            className="border rounded p-2 w-full"
-            required
-          />
-        </div>
-        {/* Website */}
-        <div>
-          <label htmlFor="website" className="block font-medium">
-            Website
-          </label>
-          <input
-            id="website"
-            name="website"
-            value={formData.website}
-            onChange={handleChange}
-            placeholder="Website"
-            className="border rounded p-2 w-full"
-          />
-        </div>
-      </div>
-      {/* Comments */}
-      <div>
-        <label htmlFor="comments" className="block font-medium">
-          Comments
-        </label>
-        <textarea
-          id="comments"
-          name="comments"
-          value={formData.comments}
-          onChange={handleChange}
-          placeholder="Comments"
-          className="border rounded p-2 w-full h-32"
-        />
-      </div>
-      {/* Customer Type */}
-      <fieldset className="space-y-2">
-        <legend className="font-semibold">
-          Customer Type <span className="text-red-500">*</span>
-        </legend>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {[
-            "Distributor",
-            "Contractor",
-            "Flooring Retailer",
-            "Architect",
-            "Designer",
-            "HomeOwner",
-            "Kitchen/Bath Dealer",
-            "Other",
-          ].map((type) => (
-            <label key={type} className="flex items-center">
-              <input
-                type="checkbox"
-                name="customerTypes"
-                value={type}
-                checked={formData.customerTypes.includes(type)}
-                onChange={handleChange}
-                className="mr-2"
-              />
-              {type}
-            </label>
-          ))}
-        </div>
-        {formData.customerTypes.includes("Other") && (
-          <input
-            name="otherCustomerType"
-            value={formData.otherCustomerType}
-            onChange={handleChange}
-            placeholder="Please specify"
-            className="border rounded p-2 w-full mt-2"
-          />
-        )}
-      </fieldset>
-      {/* Product Interests */}
-      <fieldset className="space-y-2">
-        <legend className="font-semibold">
-          Product Interests <span className="text-red-500">*</span>
-        </legend>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {[
-            "Cement",
-            "Flooring",
-            "Lighting",
-            "Accessories",
-            "Marble",
-            "Granite",
-            "Mosaic",
-            "Other",
-          ].map((prod) => (
-            <label key={prod} className="flex items-center">
-              <input
-                type="checkbox"
-                name="productInterests"
-                value={prod}
-                checked={formData.productInterests.includes(prod)}
-                onChange={handleChange}
-                className="mr-2"
-              />
-              {prod}
-            </label>
-          ))}
-        </div>
-        {formData.productInterests.includes("Other") && (
-          <input
-            name="otherProductInterest"
-            value={formData.otherProductInterest}
-            onChange={handleChange}
-            placeholder="Please specify"
-            className="border rounded p-2 w-full mt-2"
-          />
-        )}
-      </fieldset>
-      {/* How did you hear about us? */}
-      <div>
-        <label htmlFor="hearAbout" className="block font-semibold mb-1">
-          How did you hear about us?
-        </label>
-        <select
-          id="hearAbout"
-          name="hearAbout"
-          value={formData.hearAbout}
-          onChange={handleChange}
-          className="border rounded p-2 w-full"
-        >
-          <option value="">Select one</option>
-          <option>Website</option>
-          <option>Social Media</option>
-          <option>Email Newsletter</option>
-          <option>Friend/Family</option>
-          <option>Search Engine</option>
-        </select>
-      </div>
-      {/* Submit */}
-      <button
-        type="submit"
-        disabled={submitting || !isFormValid}
-        className={`w-full py-3 ${
-          isFormValid ? "bg-orange-500 hover:bg-orange-600" : "bg-gray-300"
-        } text-white font-semibold rounded disabled:opacity-50`}
-      >
-        {submitting ? "Submitting…" : "Submit"}
-      </button>
-      {success === true && (
-        <p className="text-green-600 pt-4">
-          Thank you! We’ll be in touch soon.
-        </p>
-      )}
-      {success === false && (
-        <p className="text-red-600 pt-4">
-          Oops, something went wrong. Please try again.
-        </p>
-      )}
-    </form>
-  );
-}
+export default ContactForm;

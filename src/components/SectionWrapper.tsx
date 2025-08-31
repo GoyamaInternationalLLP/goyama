@@ -1,8 +1,8 @@
 import { staggerContainer } from "@/lib/motion";
 import { motion } from "motion/react";
 
-const SectionWrapper = (Component: React.ComponentType, idName: string) =>
-  function HOC() {
+const SectionWrapper = <T extends object>(Component: React.ComponentType<T>, idName: string) =>
+  function HOC(props: T) {
     return (
       <motion.section
         variants={staggerContainer()}
@@ -17,7 +17,7 @@ const SectionWrapper = (Component: React.ComponentType, idName: string) =>
         >
           &nbsp;
         </span>
-        <Component />
+        <Component {...props} />
       </motion.section>
     );
   };

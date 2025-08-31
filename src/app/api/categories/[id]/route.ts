@@ -2,20 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthUser } from "@/lib/auth";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const category = await prisma.category.findUnique({
-      where: { id: params.id },
-      include: {
-        products: {
-          where: { isActive: true },
-          orderBy: { sortOrder: "asc" },
+    const { id } = await params;
+    let category;
+    if (id) {
+      category = await prisma.category.findUnique({
+        where: { id: id },
+        include: {
+          products: {
+            where: { isActive: true },
+            orderBy: { createdAt: "asc" },
+          },
         },
-      },
-    });
-
-    if (!category) {
-      return NextResponse.json({ error: "Category not found" }, { status: 404 });
+      });
+      if (!category) {
+        return NextResponse.json({ error: "Category not found" }, { status: 404 });
+      }
     }
 
     return NextResponse.json(category);
@@ -24,7 +27,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getAuthUser(request);
     if (!user || user.role !== "ADMIN") {
@@ -32,17 +35,20 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     const body = await request.json();
-    const { name, slug, description, imageUrl, isActive, sortOrder } = body;
+    const { name, slug, description, imageUrl, isActive } = body;
 
+    const { id } = await params;
+    if (!id) {
+      return NextResponse.json({ error: "Category ID is required" }, { status: 400 });
+    }
     const category = await prisma.category.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         name,
         slug,
         description,
         imageUrl,
         isActive,
-        sortOrder,
       },
     });
 
@@ -52,15 +58,19 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getAuthUser(request);
     if (!user || user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { id } = await params;
+    if (!id) {
+      return NextResponse.json({ error: "Category ID is required" }, { status: 400 });
+    }
     await prisma.category.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     return NextResponse.json({ message: "Category deleted successfully" });

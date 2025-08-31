@@ -62,7 +62,7 @@ const Hero = () => {
       </section>
 
       {/* Mission, Vision, Values Section - Overlapping */}
-      <section className="relative -mt-16 z-10 px-5 md:px-40 pb-16 animate-slideup">
+      <section className="relative -mt-16 z-10 px-5 md:px-40 animate-slideup">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {companyValues.map((item) => {
             const IconComponent = item.icon;

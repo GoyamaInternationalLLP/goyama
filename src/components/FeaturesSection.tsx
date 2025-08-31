@@ -7,41 +7,9 @@ import { useRouter } from "nextjs-toploader/app";
 import { FaLongArrowAltRight, FaPause, FaPlay } from "react-icons/fa";
 import SectionWrapper from "./SectionWrapper";
 import { motion } from "framer-motion";
+import { Category } from "../../types";
 
-const features = [
-  {
-    title: "Quartz Basic Series",
-    description: "Premium quality basic quartz slabs for everyday applications",
-    image: "/quartz-basic-series.webp",
-    url: "/quartz",
-  },
-  {
-    title: "Fly Ash",
-    description: "High-grade Class F fly ash for construction applications",
-    image: "/flyash.webp",
-    url: "/flyash",
-  },
-  {
-    title: "Quartz Calacatta Series",
-    description: "Luxurious Calacatta patterns for premium projects",
-    image: "/quartz-calacatta-series.webp",
-    url: "/quartz",
-  },
-  {
-    title: "Quartz Multi Exotic",
-    description: "Exotic and unique quartz designs for statement pieces",
-    image: "/quartz-multi-exotic.webp",
-    url: "/quartz",
-  },
-  {
-    title: "Quartz Carrara Series",
-    description: "Classic Carrara marble-inspired quartz collection",
-    image: "/quartz-carrara-series.webp",
-    url: "/quartz",
-  },
-];
-
-const FeaturesSection = () => {
+const FeaturesSection = ({ categories }: { categories: Category[] }) => {
   const router = useRouter();
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTranslate, setCurrentTranslate] = useState(0);
@@ -56,7 +24,7 @@ const FeaturesSection = () => {
   const lastTimeRef = useRef<number>(0);
 
   // Create duplicated array for infinite scroll
-  const duplicatedFeatures = [...features, ...features, ...features];
+  const duplicatedCategories = [...categories, ...categories, ...categories];
 
   useEffect(() => {
     const updateItemWidth = () => {
@@ -92,7 +60,7 @@ const FeaturesSection = () => {
 
       setCurrentTranslate((prev) => {
         const newTranslate = prev - moveDistance;
-        const resetPoint = -(features.length * itemWidth);
+        const resetPoint = -(categories.length * itemWidth);
 
         if (newTranslate <= resetPoint) {
           return 0;
@@ -116,7 +84,7 @@ const FeaturesSection = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isPlaying, isDragging, itemWidth, features.length]);
+  }, [isPlaying, isDragging, itemWidth, categories.length]);
 
   // Handle drag start
   const handleDragStart = (clientX: number) => {
@@ -141,10 +109,10 @@ const FeaturesSection = () => {
     const newTranslate = startTranslate + diff * dragMultiplier;
 
     // Handle infinite boundaries
-    const resetPoint = -(features.length * itemWidth);
+    const resetPoint = -(categories.length * itemWidth);
 
     if (newTranslate > 0) {
-      setCurrentTranslate(resetPoint + (newTranslate % (features.length * itemWidth)));
+      setCurrentTranslate(resetPoint + (newTranslate % (categories.length * itemWidth)));
     } else if (newTranslate < resetPoint) {
       setCurrentTranslate(newTranslate % resetPoint);
     } else {
@@ -168,10 +136,10 @@ const FeaturesSection = () => {
         if (!isDragging) {
           setCurrentTranslate((prev) => {
             const newPos = prev + momentum * direction;
-            const resetPoint = -(features.length * itemWidth);
+            const resetPoint = -(categories.length * itemWidth);
 
             if (newPos > 0) {
-              return resetPoint + (newPos % (features.length * itemWidth));
+              return resetPoint + (newPos % (categories.length * itemWidth));
             } else if (newPos < resetPoint) {
               return newPos % resetPoint;
             }
@@ -350,13 +318,13 @@ const FeaturesSection = () => {
               className="flex slider-content"
               style={{
                 transform: `translateX(${currentTranslate}px)`,
-                width: `${duplicatedFeatures.length * (itemWidth || 300)}px`,
+                width: `${duplicatedCategories.length * (itemWidth || 300)}px`,
                 transition: isDragging ? "none" : "transform 0.1s ease-out",
               }}
             >
-              {duplicatedFeatures.map((feature, index) => (
+              {duplicatedCategories.map((category, index) => (
                 <div
-                  key={`${feature.title}-${index}`}
+                  key={`${category.name}-${index}`}
                   className="flex-shrink-0 px-4"
                   style={{ width: `${itemWidth || 300}px` }}
                 >
@@ -367,14 +335,14 @@ const FeaturesSection = () => {
                   >
                     <div
                       className={`card-item ${draggedDistance > 10 ? "no-click" : ""}`}
-                      onClick={(e) => handleCardClick(e, feature.url)}
+                      onClick={(e) => handleCardClick(e, `/${category.slug}`)}
                     >
                       <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:border-blue-400/50 cursor-pointer">
                         {/* Image */}
                         <div className="relative h-64 overflow-hidden">
                           <Image
-                            src={feature.image}
-                            alt={feature.title}
+                            src={category.imageUrl || "/placeholder.jpg"}
+                            alt={category.name}
                             fill
                             className="object-cover group-hover:scale-110 transition-transform duration-500"
                             draggable={false}
@@ -385,9 +353,9 @@ const FeaturesSection = () => {
                         {/* Content */}
                         <div className="p-6">
                           <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">
-                            {feature.title}
+                            {category.name}
                           </h3>
-                          <p className="text-gray-300 text-sm mb-4 line-clamp-2">{feature.description}</p>
+                          <p className="text-gray-300 text-sm mb-4 line-clamp-2">{category.description}</p>
                           <div className="flex items-center text-blue-400 font-semibold group-hover:text-blue-300 transition-colors duration-300">
                             Explore More
                             <FaLongArrowAltRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />

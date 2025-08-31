@@ -1,19 +1,39 @@
-import { NextResponse } from "next/server";
+import { getAuthUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: Request) {
-  const formData = await request.json();
-  const res = await fetch(
-    "https://script.google.com/macros/s/AKfycbw0L52je9JyknVAMz3Xa9ikzV4CsauXp_ZaAf0W8NMES-h-MlWFsFB4X0cwuKcJXxtb4w/exec",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    }
-  );
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const skip = (page - 1) * limit;
 
-  if (!res.ok) {
-    return NextResponse.json({ error: "Submission failed" }, { status: 500 });
+    const contacts = await prisma.contact.findMany({
+      skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json(contacts);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch contacts" }, { status: 500 });
   }
-  const payload = await res.json();
-  return NextResponse.json(payload);
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { name, email, organizationName, message, contactNumber } = await request.json();
+    const contact = await prisma.contact.create({
+      data: {
+        name,
+        email,
+        organizationName,
+        message,
+        contactNumber,
+      },
+    });
+    return NextResponse.json({ contact, success: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to create contact" }, { status: 500 });
+  }
 }

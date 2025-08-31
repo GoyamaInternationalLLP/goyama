@@ -7,16 +7,17 @@ import HeroSlider from "@/components/ui/HeroSlider";
 import HomeWhoWeAreSection from "@/components/HomeWhoWeAreSection";
 import DownloadBrochureSection from "@/components/DownloadBrochureSection";
 import { fetchCategories } from "@/lib/api";
+import { Category } from "../../../types";
 
 export default async function Home() {
-  const categories = await fetchCategories();
+  const categories = (await fetchCategories()) as Category[];
 
   return (
     <>
       <Hero />
       <HomeWhoWeAreSection />
       <section id="about">{/* <Guide /> */}</section>
-      <FeaturesSection />
+      <FeaturesSection categories={categories} />
       {/* <Camp /> */}
       <DownloadBrochureSection />
     </>

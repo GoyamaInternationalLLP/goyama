@@ -27,10 +27,6 @@ export async function GET(request: NextRequest) {
               slug: true,
             },
           },
-          images: {
-            orderBy: { isPrimary: "desc" },
-          },
-          videos: true,
         },
       }),
       prisma.product.count({ where }),
@@ -66,30 +62,17 @@ export async function POST(request: NextRequest) {
         slug,
         description,
         categoryId,
-        images: {
-          create: images.map((img: any, index: number) => ({
-            imageUrl: img.imageUrl,
-            altText: img.altText || title,
-            isPrimary: index === 0, // First image is primary
-          })),
-        },
-        videos: {
-          create: videos.map((video: any) => ({
-            videoUrl: video.videoUrl,
-            thumbnailUrl: video.thumbnailUrl,
-            title: video.title || title,
-          })),
-        },
+        images: images.map((img: any) => img.imageUrl),
+        videos: videos.map((video: any) => video.videoUrl),
       },
       include: {
         category: true,
-        images: true,
-        videos: true,
       },
     });
 
     return NextResponse.json(product);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
+    console.log(error);
+    return NextResponse.json({ error: "Failed to create product" + error }, { status: 500 });
   }
 }

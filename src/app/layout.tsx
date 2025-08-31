@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import NextTopLoader from "nextjs-toploader";
+import "./globals.css";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Goyama International",
@@ -18,10 +17,16 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NextTopLoader
-          color="#D4AF37"
+          color="#1F2A44"
           height={4}
         />
         <div>{children}</div>
+        <Toaster
+          position="top-center"
+          richColors
+          closeButton={true}
+          duration={4000}
+        />
       </body>
     </html>
   );

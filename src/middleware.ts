@@ -1,8 +1,9 @@
 // src/middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { jwtVerify } from "jose";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Check if accessing admin routes
   if (request.nextUrl.pathname.startsWith("/admin")) {
     // Allow login page
@@ -15,6 +16,18 @@ export function middleware(request: NextRequest) {
     const userRole = request.cookies.get("userRole");
 
     if (!authToken || !userRole || userRole.value !== "ADMIN") {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+
+    try {
+      // Verify token using jose
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+      await jwtVerify(authToken.value, secret);
+
+      // ✅ Token is valid → continue
+      return NextResponse.next();
+    } catch (err) {
+      console.error("JWT verification failed:", err);
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
 

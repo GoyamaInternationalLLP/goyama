@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const { slug } = await params;
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const skip = (page - 1) * limit;
 
     const category = await prisma.category.findUnique({
-      where: { slug: params.slug },
-      select: { id: true, name: true, slug: true, description: true },
+      where: { slug: slug },
+      select: { id: true, name: true, slug: true, description: true, imageUrl: true },
     });
 
     if (!category) {
@@ -34,10 +35,6 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
               slug: true,
             },
           },
-          images: {
-            orderBy: { isPrimary: "desc" },
-          },
-          videos: true,
         },
       }),
       prisma.product.count({

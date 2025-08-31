@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { authUtils, verifyToken } from "./auth";
 
 // Base API configuration
 const BASE_URL = process.env.NODE_ENV === "production" ? "https://your-domain.com" : "http://localhost:3000";
@@ -17,7 +18,7 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API request failed:", error.response?.data || error.message);
+    console.error("API request failed:", error);
     return Promise.reject(error);
   }
 );
@@ -36,8 +37,11 @@ async function apiRequest(endpoint: string, options?: AxiosRequestConfig) {
 }
 
 // Categories API functions
-export const fetchCategories = async () => {
-  return apiRequest("/api/categories");
+export const fetchCategories = async (params?: { page?: number; limit?: number }) => {
+  return apiRequest("/api/categories", {
+    method: "GET",
+    params: params,
+  });
 };
 
 export const fetchCategoryById = async (id: string) => {
@@ -48,7 +52,7 @@ export const fetchCategoryById = async (id: string) => {
 export const fetchProducts = async (params?: { categoryId?: string; page?: number; limit?: number }) => {
   return apiRequest("/api/products", {
     method: "GET",
-    params: params, // Axios handles URLSearchParams automatically
+    params: params,
   });
 };
 
@@ -122,6 +126,19 @@ export const createCategory = async (categoryData: any) => {
   });
 };
 
+export const updateCategory = async (id: string, categoryData: any) => {
+  return apiRequest(`/api/categories/${id}`, {
+    method: "PUT",
+    data: categoryData,
+  });
+};
+
+export const deleteCategory = async (id: string) => {
+  return apiRequest(`/api/categories/${id}`, {
+    method: "DELETE",
+  });
+};
+
 export const uploadFile = async (file: File, folder: string = "goyama") => {
   const formData = new FormData();
   formData.append("file", file);
@@ -136,15 +153,49 @@ export const uploadFile = async (file: File, folder: string = "goyama") => {
   });
 };
 
-export const updateCategory = async (id: string, categoryData: any) => {
-  return apiRequest(`/api/categories/${id}`, {
-    method: "PUT",
-    data: categoryData,
+export const updateUserPassword = async (id: string, password: string) => {
+  return apiRequest(`/api/users/${id}`, {
+    method: "PATCH",
+    data: { password },
   });
 };
 
-export const deleteCategory = async (id: string) => {
-  return apiRequest(`/api/categories/${id}`, {
+export const fetchEnquiries = async (params?: { page?: number; limit?: number }) => {
+  return apiRequest("/api/enquiries", {
+    method: "GET",
+    params: params,
+  });
+};
+
+export const createEnquiry = async (enquiryData: any) => {
+  return apiRequest("/api/enquiries", {
+    method: "POST",
+    data: enquiryData,
+  });
+};
+
+export const deleteEnquiry = async (id: string) => {
+  return apiRequest(`/api/enquiries/${id}`, {
+    method: "DELETE",
+  });
+};
+
+export const fetchContacts = async (params?: { page?: number; limit?: number }) => {
+  return apiRequest("/api/contact", {
+    method: "GET",
+    params: params,
+  });
+};
+
+export const createContact = async (contactData: any) => {
+  return apiRequest("/api/contact", {
+    method: "POST",
+    data: contactData,
+  });
+};
+
+export const deleteContact = async (id: string) => {
+  return apiRequest(`/api/contact/${id}`, {
     method: "DELETE",
   });
 };

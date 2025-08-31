@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
 import { NextRequest } from "next/server";
 import { prisma } from "./prisma";
+import axios from "axios";
 
 export const hashPassword = async (password: string) => {
   return await bcryptjs.hash(password, 12);
@@ -24,11 +25,11 @@ export const verifyToken = (token: string) => {
 };
 
 export const getAuthUser = async (request: NextRequest) => {
-  const token = request.headers.get("authorization")?.replace("Bearer ", "");
+  const token = request.cookies.get("authToken");
 
   if (!token) return null;
 
-  const decoded = verifyToken(token);
+  const decoded = verifyToken(token.value);
   if (!decoded) return null;
 
   const user = await prisma.user.findUnique({
@@ -111,4 +112,30 @@ export const serverAuthUtils = {
       "userRole=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;",
     ];
   },
+};
+
+export const getCurrentUser = async () => {
+  try {
+    // First check if we have auth cookies
+    const token = authUtils.getCookie("authToken");
+    const role = authUtils.getCookie("userRole");
+
+    if (!token || !role) {
+      return null;
+    }
+
+    // Call API to get full user details
+    const response = await axios.get("/api/auth/me", {
+      withCredentials: true, // Include cookies
+    });
+
+    if (response.status !== 200) {
+      return null;
+    }
+
+    return response.data.user;
+  } catch (error) {
+    console.error("Failed to get current user:", error);
+    return null;
+  }
 };
