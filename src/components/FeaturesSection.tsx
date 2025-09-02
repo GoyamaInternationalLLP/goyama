@@ -8,8 +8,10 @@ import { FaLongArrowAltRight, FaPause, FaPlay } from "react-icons/fa";
 import SectionWrapper from "./SectionWrapper";
 import { motion } from "framer-motion";
 import { Category } from "../../types";
+import { getCategories } from "@/actions/categories";
+import LoadingSpinner from "./LoadingSpinner";
 
-const FeaturesSection = ({ categories }: { categories: Category[] }) => {
+const FeaturesSection = () => {
   const router = useRouter();
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTranslate, setCurrentTranslate] = useState(0);
@@ -22,9 +24,35 @@ const FeaturesSection = ({ categories }: { categories: Category[] }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   // Create duplicated array for infinite scroll
   const duplicatedCategories = [...categories, ...categories, ...categories];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getCategories({ includeSubcategories: true });
+      console.log(res);
+      if (res.success && res.data) {
+        // Filter to get only:
+        // 1. Main categories without subcategories (parentId is null AND subcategories array is empty)
+        // 2. Subcategories (parentId is not null)
+        const filteredCategories = res.data.categories.flatMap((cat) =>
+          cat.subcategories && cat.subcategories.length > 0
+            ? cat.subcategories.map((sub) => ({
+                ...sub,
+                name: `${cat.name} > ${sub.name}`,
+              }))
+            : [cat]
+        );
+        console.log("Filtered Categories:", filteredCategories);
+
+        // @ts-ignore
+        setCategories(filteredCategories);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const updateItemWidth = () => {
@@ -302,10 +330,12 @@ const FeaturesSection = ({ categories }: { categories: Category[] }) => {
             {isPlaying ? <FaPause className="text-white text-lg" /> : <FaPlay className="text-white text-lg" />}
           </button> */}
 
+          {!duplicatedCategories.length ? <LoadingSpinner /> : null}
+
           {/* Draggable Slider */}
           <div
             ref={containerRef}
-            className={`overflow-hidden py-10 slider-container ${isDragging ? "dragging" : ""}`}
+            className={`overflow-hidden pt-2.5 mt-8 slider-container ${isDragging ? "dragging" : ""}`}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -322,50 +352,51 @@ const FeaturesSection = ({ categories }: { categories: Category[] }) => {
                 transition: isDragging ? "none" : "transform 0.1s ease-out",
               }}
             >
-              {duplicatedCategories.map((category, index) => (
-                <div
-                  key={`${category.name}-${index}`}
-                  className="flex-shrink-0 px-4"
-                  style={{ width: `${itemWidth || 300}px` }}
-                >
-                  <motion.div
-                    whileHover={{ y: -10 }}
-                    transition={{ type: "spring", damping: 20, stiffness: 200 }}
-                    className="group"
+              {duplicatedCategories.length &&
+                duplicatedCategories.map((category, index) => (
+                  <div
+                    key={`${category.name}-${index}`}
+                    className="flex-shrink-0 px-4"
+                    style={{ width: `${itemWidth || 300}px` }}
                   >
-                    <div
-                      className={`card-item ${draggedDistance > 10 ? "no-click" : ""}`}
-                      onClick={(e) => handleCardClick(e, `/${category.slug}`)}
+                    <motion.div
+                      whileHover={{ y: -10 }}
+                      transition={{ type: "spring", damping: 20, stiffness: 200 }}
+                      className="group"
                     >
-                      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:border-blue-400/50 cursor-pointer">
-                        {/* Image */}
-                        <div className="relative h-64 overflow-hidden">
-                          <Image
-                            src={category.imageUrl || "/placeholder.jpg"}
-                            alt={category.name}
-                            fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                            draggable={false}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        </div>
+                      <div
+                        className={`card-item ${draggedDistance > 10 ? "no-click" : ""}`}
+                        onClick={(e) => handleCardClick(e, `/${category.slug}`)}
+                      >
+                        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:border-blue-400/50 cursor-pointer">
+                          {/* Image */}
+                          <div className="relative h-64 overflow-hidden">
+                            <Image
+                              src={category.imageUrl || "/placeholder.jpg"}
+                              alt={category.name}
+                              fill
+                              className="object-cover group-hover:scale-110 transition-transform duration-500"
+                              draggable={false}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                          </div>
 
-                        {/* Content */}
-                        <div className="p-6">
-                          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">
-                            {category.name}
-                          </h3>
-                          <p className="text-gray-300 text-sm mb-4 line-clamp-2">{category.description}</p>
-                          <div className="flex items-center text-blue-400 font-semibold group-hover:text-blue-300 transition-colors duration-300">
-                            Explore More
-                            <FaLongArrowAltRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                          {/* Content */}
+                          <div className="p-6">
+                            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">
+                              {category.name}
+                            </h3>
+                            <p className="text-gray-300 text-sm mb-4 line-clamp-2">{category.description}</p>
+                            <div className="flex items-center text-blue-400 font-semibold group-hover:text-blue-300 transition-colors duration-300">
+                              Explore More
+                              <FaLongArrowAltRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                </div>
-              ))}
+                    </motion.div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>

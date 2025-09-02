@@ -1,6 +1,7 @@
 "use client";
 
 import { VALUES } from "@/constants";
+import { fadeIn } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";

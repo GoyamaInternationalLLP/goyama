@@ -113,29 +113,3 @@ export const serverAuthUtils = {
     ];
   },
 };
-
-export const getCurrentUser = async () => {
-  try {
-    // First check if we have auth cookies
-    const token = authUtils.getCookie("authToken");
-    const role = authUtils.getCookie("userRole");
-
-    if (!token || !role) {
-      return null;
-    }
-
-    // Call API to get full user details
-    const response = await axios.get("/api/auth/me", {
-      withCredentials: true, // Include cookies
-    });
-
-    if (response.status !== 200) {
-      return null;
-    }
-
-    return response.data.user;
-  } catch (error) {
-    console.error("Failed to get current user:", error);
-    return null;
-  }
-};

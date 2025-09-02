@@ -21,15 +21,21 @@ model User {
 }
 
 model Category {
-  id          String    @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
-  slug        String    @unique
+  slug        String  @unique
   description String?
   imageUrl    String?
-  isActive    Boolean   @default(true)
-  products    Product[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  isActive    Boolean @default(true)
+
+  // Self-referencing for subcategories
+  parentId      String? // null for main categories, categoryId for subcategories
+  parent        Category?  @relation("CategorySubcategory", fields: [parentId], references: [id], onDelete: Cascade)
+  subcategories Category[] @relation("CategorySubcategory")
+
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("categories")
 }

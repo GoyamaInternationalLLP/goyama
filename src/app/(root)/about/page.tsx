@@ -8,7 +8,7 @@ const AboutPage = () => {
     <div>
       <AboutBannerSection />
       <ValuesSection />
-      <WhyUsSection />
+      {/* <WhyUsSection /> */}
       <MeetTeamSection />
     </div>
   );

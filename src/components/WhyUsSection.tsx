@@ -5,7 +5,7 @@ const WhyUsSection = () => {
     <section className="flex flex-col items-center justify-center gap-20 px-10 lg:px-20 xl:px-40 py-20">
       <div className="flex flex-col items-start lg:items-center gap-2">
         <h1 className="text-gray-700 animate-slidedown border-l-4 border-[#D4AF37] pl-4 uppercase">Why Us</h1>
-        <h1 className="text-5xl font-extrabold animate-slidedown uppercase text-left lg:text-center">
+        <h1 className="text-3xl md:text-5xl font-extrabold animate-slidedown uppercase text-left lg:text-center">
           delivering trust,
           <br />
           precision, and partnership

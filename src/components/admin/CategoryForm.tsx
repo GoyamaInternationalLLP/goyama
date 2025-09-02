@@ -11,12 +11,13 @@ import { useRouter } from "nextjs-toploader/app";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Category } from "../../../types";
 import { Textarea } from "../ui/textarea";
 import { toast } from "sonner";
 import LoadingSpinner from "../LoadingSpinner";
-import { createCategory, updateCategory } from "@/actions/categories";
+import { createCategory, updateCategory, getMainCategories } from "@/actions/categories";
 import { uploadFile } from "@/lib/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -27,6 +28,8 @@ const formSchema = z.object({
       message: "Slug must be lowercase and can only contain letters, numbers, and hyphens.",
     }),
   description: z.string().min(1, "Description is required"),
+  parentId: z.string().optional(),
+  isActive: z.boolean(),
   image: z
     .instanceof(File)
     .refine((file) => file.size <= 5 * 1024 * 1024, "Max 5MB size")
@@ -36,6 +39,21 @@ const formSchema = z.object({
     )
     .optional(),
 });
+
+interface CategoryWithParent {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  imageUrl: string | null;
+  isActive: boolean;
+  parentId: string | null;
+  parent?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
+}
 
 interface ImageUploadProps {
   value?: File;
@@ -239,8 +257,10 @@ const ImageUpload = ({ value, onChange, disabled, existingImageUrl }: ImageUploa
   );
 };
 
-const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categoryData?: Category }) => {
+const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categoryData?: CategoryWithParent }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mainCategories, setMainCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -249,15 +269,37 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
       name: categoryData?.name || "",
       slug: categoryData?.slug || "",
       description: categoryData?.description || "",
+      parentId: categoryData?.parentId || undefined,
+      isActive: categoryData?.isActive ?? true,
       image: undefined,
     },
   });
+
+  // Load main categories for parent selection
+  useEffect(() => {
+    const loadMainCategories = async () => {
+      try {
+        const res = await getMainCategories();
+        if (res.success && res.data) {
+          // Filter out current category if editing to prevent self-reference
+          const filtered = categoryData ? res.data.filter((cat) => cat.id !== categoryData.id) : res.data;
+          setMainCategories(filtered);
+        }
+      } catch (error) {
+        console.error("Failed to load main categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMainCategories();
+  }, [categoryData]);
 
   // Auto-generate slug from name
   const watchName = form.watch("name");
 
   useEffect(() => {
-    if (watchName) {
+    if (watchName && (type === "create" || form.getValues("slug") === "")) {
       const slug = watchName
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, "")
@@ -289,6 +331,8 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
         name: values.name,
         slug: values.slug,
         description: values.description,
+        parentId: values.parentId === "no-parent" ? null : values.parentId,
+        isActive: values.isActive,
         imageUrl: imageUrl,
       };
 
@@ -319,6 +363,14 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="mt-6 flex items-center justify-center p-8">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
@@ -401,6 +453,81 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
                   </FormItem>
                 )}
               />
+            </div>
+
+            {/* Category Hierarchy */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-900">Category Hierarchy</h3>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="parentId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Parent Category (Optional)</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value || ""}
+                        disabled={isSubmitting}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a parent category (optional)" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="no-parent">No Parent (Main Category)</SelectItem>
+                          {mainCategories.map((category) => (
+                            <SelectItem
+                              key={category.id}
+                              value={category.id}
+                            >
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Leave empty to create a main category, or select a parent to create a subcategory.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="isActive"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Category Status</FormLabel>
+                        <FormDescription>Inactive categories won't be visible to customers.</FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          disabled={isSubmitting}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Show parent info for editing subcategories */}
+              {type === "edit" && categoryData?.parent && (
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    <strong>Current Parent:</strong> {categoryData.parent.name}
+                  </p>
+                  <p className="text-xs text-blue-600 mt-1">
+                    This is currently a subcategory. You can change its parent or make it a main category.
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Image Upload */}

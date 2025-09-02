@@ -11,12 +11,10 @@ const SectionWrapper = <T extends object>(Component: React.ComponentType<T>, idN
         viewport={{ once: true, amount: 0.25 }}
         className={`max-w-full mx-auto relative z-0`}
       >
-        <span
+        {/* <span
           className="hash-span"
           id={idName}
-        >
-          &nbsp;
-        </span>
+        ></span> */}
         <Component {...props} />
       </motion.section>
     );

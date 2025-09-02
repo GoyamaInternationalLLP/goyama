@@ -18,12 +18,12 @@ import { Category, Product } from "../../../types";
 import { toast } from "sonner";
 import LoadingSpinner from "../LoadingSpinner";
 import { getCategories } from "@/actions/categories";
-import { createProduct, updateProduct } from "@/actions/products";
+import { createProduct, updateProduct, getCategoriesForProducts } from "@/actions/products";
 
 const loadHeic2any = async () => (await import("heic2any")).default;
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
-const MAX_IMAGE_SIZE = 100 * 1024 * 1024; // 100MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_IMAGE_SIZE = 1000 * 1024 * 1024; // 100MB
 const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/png",
@@ -192,7 +192,7 @@ const ImageUpload = ({ value, onChange, disabled, existingImageUrl, onRemove, se
             <div className="text-center">
               <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
               <p className="text-sm text-gray-600">Upload Image</p>
-              <p className="text-xs text-gray-400">PNG, JPG, GIF, WEBP, HEIC up to 5MB</p>
+              <p className="text-xs text-gray-400">PNG, JPG, GIF, WEBP, HEIC up to 10MB</p>
             </div>
           </div>
           {onRemove && (
@@ -380,7 +380,7 @@ const VideoUpload = ({ value, onChange, disabled, existingVideoUrl, onRemove }: 
           <div className="text-center">
             <Video className="mx-auto h-8 w-8 text-gray-400 mb-2" />
             <p className="text-sm text-gray-600">Upload Video</p>
-            <p className="text-xs text-gray-400">MP4, WEBM, OGG, HEVC, MOV, AVI up to 10MB</p>
+            <p className="text-xs text-gray-400">MP4, WEBM, OGG, HEVC, MOV, AVI up to 100MB</p>
           </div>
         </div>
       ) : (
@@ -454,7 +454,15 @@ const VideoUpload = ({ value, onChange, disabled, existingVideoUrl, onRemove }: 
 // Main ProductForm Component
 const ProductForm = ({ type, productData }: { type: "create" | "edit"; productData?: Product }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<
+    Array<{
+      id: string;
+      name: string;
+      slug: string;
+      isSubcategory: boolean;
+      parentName?: string;
+    }>
+  >([]);
   const router = useRouter();
 
   const form = useForm<FormData>({
@@ -503,9 +511,9 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const catRes = await getCategories();
+        const catRes = await getCategoriesForProducts();
         if (!catRes.success) throw new Error("Failed to fetch categories");
-        if (catRes.success && catRes.data) setCategories(catRes.data?.categories);
+        if (catRes.success && catRes.data) setCategories(catRes.data.flat);
       } catch (error) {
         console.error("Failed to load categories:", error);
       }
@@ -709,7 +717,7 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
                               key={category.id}
                               value={category.id}
                             >
-                              {category.name}
+                              {category.isSubcategory ? `${category.parentName} > ${category.name}` : category.name}
                             </SelectItem>
                           ))}
                         </SelectContent>

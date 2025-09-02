@@ -8,7 +8,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import SectionWrapper from "./SectionWrapper";
 import { motion } from "framer-motion";
-import { slideIn } from "@/lib/motion";
+import { fadeIn, slideIn } from "@/lib/motion";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -37,7 +37,7 @@ const DownloadBrochureSection = () => {
 
   return (
     <motion.section
-      variants={slideIn("down", "tween", 0.4)}
+      variants={fadeIn("up", "tween", 0.4, 1)}
       className="px-5 md:px-40 py-10 relative overflow-hidden"
     >
       {/* Decorative Background Elements */}
@@ -146,7 +146,7 @@ const DownloadBrochureSection = () => {
 
               <Button
                 type="submit"
-                className="w-full mt-5 h-12"
+                className="w-full mt-5 h-12 bg-goyama-primary hover:bg-goyama-blue text-white"
               >
                 Download our Brochure
               </Button>

@@ -103,7 +103,7 @@ export async function getProductById(id: string) {
   }
 }
 
-// Get products by category slug
+// Get products by category slug (includes products from subcategories if it's a main category)
 export async function getProductsByCategorySlug(categorySlug: string, params?: { page?: number; limit?: number }) {
   try {
     const { page = 1, limit = 10 } = params || {};
@@ -111,6 +111,12 @@ export async function getProductsByCategorySlug(categorySlug: string, params?: {
 
     const category = await prisma.category.findUnique({
       where: { slug: categorySlug },
+      include: {
+        subcategories: {
+          where: { isActive: true },
+          select: { id: true },
+        },
+      },
     });
 
     if (!category) {
@@ -120,10 +126,16 @@ export async function getProductsByCategorySlug(categorySlug: string, params?: {
       };
     }
 
+    // Build category filter - include main category and its subcategories
+    const categoryIds = [category.id];
+    if (category.subcategories.length > 0) {
+      categoryIds.push(...category.subcategories.map((sub) => sub.id));
+    }
+
     const [products, totalCount] = await Promise.all([
       prisma.product.findMany({
         where: {
-          categoryId: category.id,
+          categoryId: { in: categoryIds },
           isActive: true,
         },
         skip,
@@ -135,13 +147,21 @@ export async function getProductsByCategorySlug(categorySlug: string, params?: {
               id: true,
               name: true,
               slug: true,
+              parentId: true,
+              parent: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                },
+              },
             },
           },
         },
       }),
       prisma.product.count({
         where: {
-          categoryId: category.id,
+          categoryId: { in: categoryIds },
           isActive: true,
         },
       }),
@@ -165,6 +185,72 @@ export async function getProductsByCategorySlug(categorySlug: string, params?: {
     return {
       success: false,
       error: "Failed to fetch products",
+    };
+  }
+}
+
+// Get all categories for product forms (hierarchical structure)
+export async function getCategoriesForProducts() {
+  try {
+    const mainCategories = await prisma.category.findMany({
+      where: {
+        parentId: null,
+        isActive: true,
+      },
+      include: {
+        subcategories: {
+          where: { isActive: true },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+          orderBy: { name: "asc" },
+        },
+      },
+      orderBy: { name: "asc" },
+    });
+
+    // Flatten for form dropdown
+    const flatCategories: Array<{
+      id: string;
+      name: string;
+      slug: string;
+      isSubcategory: boolean;
+      parentName?: string;
+    }> = [];
+
+    mainCategories.forEach((main) => {
+      flatCategories.push({
+        id: main.id,
+        name: main.name,
+        slug: main.slug,
+        isSubcategory: false,
+      });
+
+      main.subcategories.forEach((sub) => {
+        flatCategories.push({
+          id: sub.id,
+          name: sub.name,
+          slug: sub.slug,
+          isSubcategory: true,
+          parentName: main.name,
+        });
+      });
+    });
+
+    return {
+      success: true,
+      data: {
+        hierarchical: mainCategories,
+        flat: flatCategories,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching categories for products:", error);
+    return {
+      success: false,
+      error: "Failed to fetch categories",
     };
   }
 }

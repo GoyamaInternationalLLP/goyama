@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
       </Head>
 
       {/* Full-height light background */}
-      <div className="min-h-screen bg-gray-50 py-16">
+      <div className="min-h-screen bg-gray-100 py-16">
         {/* Centered container with generous padding */}
         <div className="mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
           {/* Header */}

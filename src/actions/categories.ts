@@ -3,13 +3,20 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-// Get all categories with optional pagination and search
-export async function getCategories(params?: { page?: number; limit?: number; search?: string }) {
+// Get all main categories with subcategories
+export async function getCategories(params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  includeSubcategories?: boolean;
+}) {
   try {
-    const { page = 1, limit = 10, search } = params || {};
+    const { page = 1, limit = 10, search, includeSubcategories = true } = params || {};
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: any = {
+      parentId: null, // Only main categories
+    };
 
     if (search) {
       where.OR = [
@@ -26,8 +33,20 @@ export async function getCategories(params?: { page?: number; limit?: number; se
         take: limit,
         orderBy: { createdAt: "desc" },
         include: {
+          subcategories: includeSubcategories
+            ? {
+                include: {
+                  _count: {
+                    select: { products: true },
+                  },
+                },
+              }
+            : false,
           _count: {
-            select: { products: true },
+            select: {
+              products: true,
+              subcategories: true,
+            },
           },
         },
       }),
@@ -55,15 +74,97 @@ export async function getCategories(params?: { page?: number; limit?: number; se
   }
 }
 
+// Get all categories (main + subcategories) for admin
+export async function getAllCategoriesFlat(params?: { page?: number; limit?: number; search?: string }) {
+  try {
+    const { page = 1, limit = 50, search } = params || {};
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { slug: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    const [categories, totalCount] = await Promise.all([
+      prisma.category.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: [
+          { parentId: "asc" }, // Main categories first
+          { createdAt: "desc" },
+        ],
+        include: {
+          parent: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+          _count: {
+            select: {
+              products: true,
+              subcategories: true,
+            },
+          },
+        },
+      }),
+      prisma.category.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        categories,
+        pagination: {
+          page,
+          limit,
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+        },
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching all categories:", error);
+    return {
+      success: false,
+      error: "Failed to fetch categories",
+    };
+  }
+}
+
 // Get category by ID
 export async function getCategoryById(id: string) {
   try {
     const category = await prisma.category.findUnique({
       where: { id },
       include: {
+        parent: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        subcategories: {
+          include: {
+            _count: {
+              select: { products: true },
+            },
+          },
+        },
         products: true,
         _count: {
-          select: { products: true },
+          select: {
+            products: true,
+            subcategories: true,
+          },
         },
       },
     });
@@ -88,6 +189,99 @@ export async function getCategoryById(id: string) {
   }
 }
 
+// Get category by slug with all products (including from subcategories)
+export async function getCategoryBySlug(slug: string) {
+  try {
+    const category = await prisma.category.findUnique({
+      where: { slug },
+      include: {
+        parent: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        subcategories: {
+          where: { isActive: true },
+          include: {
+            products: {
+              where: { isActive: true },
+              orderBy: { createdAt: "desc" },
+            },
+            _count: {
+              select: { products: true },
+            },
+          },
+        },
+        products: {
+          where: { isActive: true },
+          orderBy: { createdAt: "desc" },
+        },
+        _count: {
+          select: {
+            products: true,
+            subcategories: true,
+          },
+        },
+      },
+    });
+
+    if (!category) {
+      return {
+        success: false,
+        error: "Category not found",
+      };
+    }
+
+    // Combine products from main category and all subcategories
+    const allProducts = [...category.products, ...category.subcategories.flatMap((sub) => sub.products)];
+
+    return {
+      success: true,
+      data: {
+        ...category,
+        allProducts,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching category:", error);
+    return {
+      success: false,
+      error: "Failed to fetch category",
+    };
+  }
+}
+
+// Get main categories for dropdown/select
+export async function getMainCategories() {
+  try {
+    const categories = await prisma.category.findMany({
+      where: {
+        parentId: null,
+        isActive: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+      orderBy: { name: "asc" },
+    });
+
+    return {
+      success: true,
+      data: categories,
+    };
+  } catch (error) {
+    console.error("Error fetching main categories:", error);
+    return {
+      success: false,
+      error: "Failed to fetch main categories",
+    };
+  }
+}
+
 // Create category
 export async function createCategory(categoryData: any) {
   try {
@@ -103,8 +297,31 @@ export async function createCategory(categoryData: any) {
       };
     }
 
+    // If parentId is provided, verify parent exists
+    if (categoryData.parentId) {
+      const parentCategory = await prisma.category.findUnique({
+        where: { id: categoryData.parentId },
+      });
+
+      if (!parentCategory) {
+        return {
+          success: false,
+          error: "Parent category not found",
+        };
+      }
+    }
+
     const category = await prisma.category.create({
       data: categoryData,
+      include: {
+        parent: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
     });
 
     revalidatePath("/admin/categories");
@@ -153,9 +370,47 @@ export async function updateCategory(id: string, categoryData: any) {
       }
     }
 
+    // If parentId is provided, verify parent exists and prevent circular reference
+    if (categoryData.parentId) {
+      if (categoryData.parentId === id) {
+        return {
+          success: false,
+          error: "Category cannot be its own parent",
+        };
+      }
+
+      const parentCategory = await prisma.category.findUnique({
+        where: { id: categoryData.parentId },
+      });
+
+      if (!parentCategory) {
+        return {
+          success: false,
+          error: "Parent category not found",
+        };
+      }
+
+      // Check if the parent is a subcategory of current category (prevent circular reference)
+      if (parentCategory.parentId === id) {
+        return {
+          success: false,
+          error: "Cannot create circular reference",
+        };
+      }
+    }
+
     const category = await prisma.category.update({
       where: { id },
       data: categoryData,
+      include: {
+        parent: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
     });
 
     revalidatePath("/admin/categories");
@@ -182,7 +437,10 @@ export async function deleteCategory(id: string) {
       where: { id },
       include: {
         _count: {
-          select: { products: true },
+          select: {
+            products: true,
+            subcategories: true,
+          },
         },
       },
     });
@@ -191,6 +449,20 @@ export async function deleteCategory(id: string) {
       return {
         success: false,
         error: "Category not found",
+      };
+    }
+
+    if (category._count.products > 0) {
+      return {
+        success: false,
+        error: "Cannot delete category with existing products",
+      };
+    }
+
+    if (category._count.subcategories > 0) {
+      return {
+        success: false,
+        error: "Cannot delete category with subcategories",
       };
     }
 
