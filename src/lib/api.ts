@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { authUtils, verifyToken } from "./auth";
 
 // Base API configuration
-const BASE_URL = process.env.NODE_ENV === "production" ? "http://localhost:3000" : "http://localhost:3000";
+const BASE_URL = process.env.NODE_ENV === "production" ? process.env.PRODUCTION_URL : "http://localhost:3000";
 
 // Create axios instance with default config
 const apiClient = axios.create({
