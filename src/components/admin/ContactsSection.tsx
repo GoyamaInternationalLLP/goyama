@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import { formatDate } from "@/lib/utils";
 import { Search, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IoEye } from "react-icons/io5";
 import { toast } from "sonner";
@@ -20,6 +19,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { deleteContact } from "@/actions/contact";
+import { useRouter } from "nextjs-toploader/app";
 
 const ContactsSection = ({ contacts }: { contacts: Contact[] }) => {
   const [searchTerm, setSearchTerm] = useState("");

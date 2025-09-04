@@ -203,10 +203,8 @@ export async function getCategoryBySlug(slug: string) {
           },
         },
         subcategories: {
-          where: { isActive: true },
           include: {
             products: {
-              where: { isActive: true },
               orderBy: { createdAt: "desc" },
             },
             _count: {
@@ -215,7 +213,6 @@ export async function getCategoryBySlug(slug: string) {
           },
         },
         products: {
-          where: { isActive: true },
           orderBy: { createdAt: "desc" },
         },
         _count: {
@@ -259,7 +256,6 @@ export async function getMainCategories() {
     const categories = await prisma.category.findMany({
       where: {
         parentId: null,
-        isActive: true,
       },
       select: {
         id: true,

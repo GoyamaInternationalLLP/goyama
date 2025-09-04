@@ -8,11 +8,12 @@ import { useState, useEffect } from "react";
 import { Button, buttonVariants } from "../ui/button";
 import { toast } from "sonner";
 import LoadingSpinner from "../LoadingSpinner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { deleteCategory } from "@/actions/categories";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "nextjs-toploader/app";
 
 interface CategoryWithParent {
   id: string;
@@ -20,7 +21,6 @@ interface CategoryWithParent {
   slug: string;
   description: string | null;
   imageUrl: string | null;
-  isActive: boolean;
   parentId: string | null;
   parent: {
     id: string;
@@ -170,10 +170,8 @@ export const CategoriesSection = ({ categories, pagination, currentSearch }: Cat
                 <TableHead>Category</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Parent</TableHead>
-                <TableHead>Slug</TableHead>
                 <TableHead>Products</TableHead>
                 <TableHead>Subcategories</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -219,9 +217,6 @@ export const CategoriesSection = ({ categories, pagination, currentSearch }: Cat
                       <span className="text-gray-400 text-sm">-</span>
                     )}
                   </TableCell>
-                  <TableCell>
-                    <code className="text-xs bg-gray-100 px-2 py-1 rounded">{category.slug}</code>
-                  </TableCell>
                   <TableCell>{category._count?.products || 0}</TableCell>
                   <TableCell>
                     {category.parentId ? (
@@ -229,11 +224,6 @@ export const CategoriesSection = ({ categories, pagination, currentSearch }: Cat
                     ) : (
                       category._count?.subcategories || 0
                     )}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={category.isActive ? "default" : "destructive"}>
-                      {category.isActive ? "Active" : "Inactive"}
-                    </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

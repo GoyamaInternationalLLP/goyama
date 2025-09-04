@@ -121,7 +121,7 @@ const AboutBannerSection = () => {
             </h1>
 
             {/* Description */}
-            <div className="text-gray-600 text-sm leading-relaxed space-y-4">
+            <div className="text-gray-600 text-sm leading-relaxed space-y-4 text-justify">
               <p>
                 Goyama International was founded by two partners united by a shared vision: to bridge gaps in global
                 construction supply chains with innovation, reliability, and deep industry insight. One partner brings

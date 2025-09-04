@@ -366,7 +366,12 @@ const FeaturesSection = () => {
                     >
                       <div
                         className={`card-item ${draggedDistance > 10 ? "no-click" : ""}`}
-                        onClick={(e) => handleCardClick(e, `/${category.slug}`)}
+                        onClick={(e) =>
+                          handleCardClick(
+                            e,
+                            category.parentId ? `/${category.parentId}/${category.slug}` : `/${category.slug}`
+                          )
+                        }
                       >
                         <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:border-blue-400/50 cursor-pointer">
                           {/* Image */}

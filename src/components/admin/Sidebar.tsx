@@ -4,12 +4,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { authUtils } from "@/lib/auth";
 import { FolderOpen, KeyRound, LayoutDashboard, LogOut, Package, User } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { LuPackageSearch } from "react-icons/lu";
 import { FaPhone, FaPhoneAlt } from "react-icons/fa";
 import { logoutUser } from "@/actions/auth";
+import { useRouter } from "nextjs-toploader/app";
 
 const Sidebar = () => {
   const router = useRouter();

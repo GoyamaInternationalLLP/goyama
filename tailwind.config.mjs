@@ -13,41 +13,89 @@ module.exports = {
 		extend: {
 			animation: {
 				scroll: 'scroll 80s forwards linear infinite',
-				slideup: "slideup 1s ease-in-out",
-				slidedown: "slidedown 1s ease-in-out",
-				slideleft: "slideleft 1s ease-in-out",
-				slideright: "slideright 1s ease-in-out",
-				heroslidedown: "heroslidedown 1s ease-in-out",
+				slideup: 'slideup 1s ease-in-out',
+				slidedown: 'slidedown 1s ease-in-out',
+				slideleft: 'slideleft 1s ease-in-out',
+				slideright: 'slideright 1s ease-in-out',
+				heroslidedown: 'heroslidedown 1s ease-in-out',
+				'accordion-down': 'accordion-down 0.2s ease-out',
+				'accordion-up': 'accordion-up 0.2s ease-out'
 			},
 			keyframes: {
 				scroll: {
 					from: {
-						transform: 'translateX(0)',
+						transform: 'translateX(0)'
 					},
 					to: {
-						transform: 'translate(calc(-50% - 0.5rem))',
-					},
+						transform: 'translate(calc(-50% - 0.5rem))'
+					}
 				},
 				slideup: {
-					from: { opacity: "0", transform: "translateY(25%)" },
-					to: { opacity: "1", transform: "none" },
+					from: {
+						opacity: '0',
+						transform: 'translateY(25%)'
+					},
+					to: {
+						opacity: '1',
+						transform: 'none'
+					}
 				},
 				slidedown: {
-					from: { opacity: "0", transform: "translateY(-25%)" },
-					to: { opacity: "1", transform: "none" },
+					from: {
+						opacity: '0',
+						transform: 'translateY(-25%)'
+					},
+					to: {
+						opacity: '1',
+						transform: 'none'
+					}
 				},
 				heroslidedown: {
-					from: { opacity: "0", transform: "translateY(-3%)" },
-					to: { opacity: "1", transform: "none" },
+					from: {
+						opacity: '0',
+						transform: 'translateY(-3%)'
+					},
+					to: {
+						opacity: '1',
+						transform: 'none'
+					}
 				},
 				slideleft: {
-					from: { opacity: "0", transform: "translateX(-20px)" },
-					to: { opacity: "1", transform: "translateX(0)" },
+					from: {
+						opacity: '0',
+						transform: 'translateX(-20px)'
+					},
+					to: {
+						opacity: '1',
+						transform: 'translateX(0)'
+					}
 				},
 				slideright: {
-					from: { opacity: "0", transform: "translateX(20px)" },
-					to: { opacity: "1", transform: "translateX(0)" },
+					from: {
+						opacity: '0',
+						transform: 'translateX(20px)'
+					},
+					to: {
+						opacity: '1',
+						transform: 'translateX(0)'
+					}
 				},
+				'accordion-down': {
+					from: {
+						height: '0'
+					},
+					to: {
+						height: 'var(--radix-accordion-content-height)'
+					}
+				},
+				'accordion-up': {
+					from: {
+						height: 'var(--radix-accordion-content-height)'
+					},
+					to: {
+						height: '0'
+					}
+				}
 			},
 			colors: {
 				green: {
@@ -55,10 +103,10 @@ module.exports = {
 					'90': '#292C27'
 				},
 				goyama: {
-					'yellow': '#D4AF37',
-					'blue': '#1F2A44',
-					'gray': '#5B6670',
-					'primary': '#13434E',
+					yellow: '#D4AF37',
+					blue: '#1F2A44',
+					gray: '#5B6670',
+					primary: '#13434E'
 				},
 				gray: {
 					'10': '#EEEEEE',
@@ -127,7 +175,7 @@ module.exports = {
 				'bg-img-7': "url('/img39.png')",
 				'bg-img-8': "url('/img40.png')",
 				'feature-bg': "url('/feature-bg.png')",
-				'pattern': "url('/pattern.png')",
+				pattern: "url('/pattern.png')",
 				'pattern-2': "url('/pattern-bg.png')"
 			},
 			screens: {

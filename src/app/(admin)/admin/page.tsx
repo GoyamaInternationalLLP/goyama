@@ -6,6 +6,7 @@ import { FolderOpen, Package } from "lucide-react";
 import { FaPhoneAlt } from "react-icons/fa";
 import { LuPackageSearch } from "react-icons/lu";
 import { Category, Contact, Enquiry, Product } from "../../../../types";
+import { Badge } from "@/components/ui/badge";
 
 export default async function AdminDashboard() {
   const [prodRes, catRes, enqRes, conRes] = await Promise.all([
@@ -107,13 +108,9 @@ export default async function AdminDashboard() {
                       <p className="text-sm font-medium text-gray-900">{product.title}</p>
                       <p className="text-sm text-gray-500">{product.category?.name}</p>
                     </div>
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        product.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {product.isActive ? "Active" : "Inactive"}
-                    </span>
+                    <Badge variant={product.isPremium ? "default" : "secondary"}>
+                      {product.isPremium ? "Premium" : "Normal"}
+                    </Badge>
                   </div>
                 ))}
               </div>
@@ -140,13 +137,6 @@ export default async function AdminDashboard() {
                       <p className="text-sm font-medium text-gray-900">{category.name}</p>
                       <p className="text-sm text-gray-500">{category.slug}</p>
                     </div>
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        category.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {category.isActive ? "Active" : "Inactive"}
-                    </span>
                   </div>
                 ))}
               </div>

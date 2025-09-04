@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaLongArrowAltRight } from "react-icons/fa";
+import { useRouter } from "nextjs-toploader/app";
 
 export type Slide = {
   id: number;
@@ -15,6 +16,7 @@ export type Slide = {
 
 export default function HeroSlider({ slides }: { slides: Slide[] }) {
   const [current, setCurrent] = useState(0);
+  const router = useRouter();
 
   // Auto slide every 7s
   useEffect(() => {
@@ -59,7 +61,10 @@ export default function HeroSlider({ slides }: { slides: Slide[] }) {
                   <div className="px-5 md:px-40 max-w-3xl text-center md:text-left animate-slideup">
                     <h1 className="text-4xl font-bold text-white mb-3 leading-snug uppercase">{slide.title}</h1>
                     <p className="text-lg text-gray-200 mb-5">{slide.description}</p>
-                    <button className="px-5 flex gap-2 items-center py-2 bg-goyama-primary hover:underline text-white text-sm md:text-base font-medium rounded-md shadow-md transition-all mx-auto md:ml-0">
+                    <button
+                      onClick={() => router.push("/contact")}
+                      className="px-5 flex gap-2 items-center py-2 bg-goyama-primary hover:underline text-white text-sm md:text-base font-medium rounded-md shadow-md transition-all mx-auto md:ml-0"
+                    >
                       {slide.buttonText}
                       <FaLongArrowAltRight />
                     </button>

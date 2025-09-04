@@ -6,11 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { uploadFile } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn, compressImage } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image as ImageIcon, Plus, Trash2, Upload, Video, X } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { set, z } from "zod";
@@ -19,11 +18,12 @@ import { toast } from "sonner";
 import LoadingSpinner from "../LoadingSpinner";
 import { getCategories } from "@/actions/categories";
 import { createProduct, updateProduct, getCategoriesForProducts } from "@/actions/products";
+import { useRouter } from "nextjs-toploader/app";
 
 const loadHeic2any = async () => (await import("heic2any")).default;
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const MAX_IMAGE_SIZE = 1000 * 1024 * 1024; // 100MB
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/png",
@@ -44,7 +44,7 @@ const formSchema = z.object({
     }),
   description: z.string().min(1, "Description is required"),
   categoryId: z.string().min(1, "Category is required"),
-  isActive: z.boolean().default(true),
+  isPremium: z.boolean().default(true),
   images: z
     .array(
       z.object({
@@ -142,6 +142,8 @@ const ImageUpload = ({ value, onChange, disabled, existingImageUrl, onRemove, se
             });
             console.log("Converted HEIC → JPEG:", file);
           }
+
+          if (file.size > 10 * 1024 * 1024) file = await compressImage(file, 10); // Compress to max 10MB
 
           // Validate after conversion
           if (ACCEPTED_IMAGE_TYPES.includes(file.type as any) && file.size <= MAX_IMAGE_SIZE) {
@@ -473,7 +475,7 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
       slug: productData?.slug || "",
       description: productData?.description || "",
       categoryId: productData?.categoryId || "",
-      isActive: productData?.isActive || true,
+      isPremium: productData?.isPremium || false,
       images: (productData &&
         productData.images &&
         productData?.images.map((img) => ({
@@ -581,7 +583,7 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
         slug: values.slug,
         description: values.description,
         categoryId: values.categoryId,
-        isActive: values.isActive,
+        isPremium: values.isPremium,
         images: imageUploads.filter(Boolean).map((img) => img!.imageUrl),
         videos: videoUploads.filter(Boolean).map((vid) => vid!.videoUrl),
       };
@@ -730,10 +732,10 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
                 <FormField
                   // @ts-ignore
                   control={form.control}
-                  name="isActive"
+                  name="isPremium"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Status</FormLabel>
+                      <FormLabel>Premium Status</FormLabel>
                       <Select
                         onValueChange={(value) => field.onChange(value === "true")}
                         defaultValue={field.value.toString()}
@@ -745,8 +747,8 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="true">Active</SelectItem>
-                          <SelectItem value="false">Inactive</SelectItem>
+                          <SelectItem value="false">Normal</SelectItem>
+                          <SelectItem value="true">Premium</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

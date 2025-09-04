@@ -88,7 +88,7 @@ const HomeWhoWeAreSection = () => {
           </h1>
 
           {/* Description */}
-          <div className="text-gray-600 text-sm leading-relaxed space-y-4">
+          <div className="text-gray-600 text-sm leading-relaxed space-y-4 text-justify">
             <p>
               We are Goyama International LLP, a globally recognized export firm born from a vision to bridge Indian
               manufacturing excellence with world-class construction and infrastructure needs. Established in 2025, we

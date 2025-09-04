@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, ChevronRight } from "lucide-react";
+import { Menu, ChevronRight, XIcon } from "lucide-react";
 import { NAV_LINKS } from "../constants";
 import { usePathname } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -11,6 +11,18 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/comp
 import { FaAngleDown } from "react-icons/fa";
 import { getCategories } from "@/actions/categories";
 import LoadingSpinner from "./LoadingSpinner";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "./ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface CategoryWithSubcategories {
   id: string;
@@ -24,7 +36,6 @@ interface CategoryWithSubcategories {
     updatedAt: Date;
     description: string | null;
     imageUrl: string | null;
-    isActive: boolean;
     parentId: string | null;
     _count?: {
       products: number;
@@ -40,6 +51,8 @@ const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [categories, setCategories] = useState<CategoryWithSubcategories[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
 
   const pathname = usePathname();
 
@@ -61,7 +74,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <nav className="z-30 py-1 px-20 flex items-center justify-between bg-white animate-slidedown shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
+    <nav className="z-30 py-1 px-2 pr-4 md:px-20 flex items-center justify-between bg-white animate-slidedown shadow-[0px_4px_16px_rgba(17,17,26,0.1),_0px_8px_24px_rgba(17,17,26,0.1),_0px_16px_56px_rgba(17,17,26,0.1)]">
       <div>
         <Link href="/">
           <Image
@@ -122,14 +135,16 @@ const Navbar: React.FC = () => {
                             </div>
                           </Link>
                         ) : (
-                          <div
-                            // href={`/${category.slug}`}
-                            className={`block p-2 text-black font-semibold transition-all text-sm`}
+                          <Link
+                            href={`/${category.slug}`}
+                            className={`block p-2 text-black font-semibold transition-all text-sm hover:bg-blue-50 hover:text-blue-700 rounded ${
+                              pathname === `/${category.slug}` ? "text-blue-700 bg-blue-50" : ""
+                            }`}
                           >
                             <div className="flex items-center justify-between">
                               <span>{category.name}</span>
                             </div>
-                          </div>
+                          </Link>
                         )}
 
                         {/* Subcategories */}
@@ -138,7 +153,7 @@ const Navbar: React.FC = () => {
                             {category.subcategories.map((subcategory) => (
                               <Link
                                 key={subcategory.id}
-                                href={`/${subcategory.slug}`}
+                                href={`/${category.slug}/${subcategory.slug}`}
                                 className={`block p-1.5 text-sm text-gray-700 hover:text-blue-700 hover:bg-blue-50 rounded transition-all ${
                                   pathname === `/${subcategory.slug}` ? "text-blue-700 bg-blue-50" : ""
                                 }`}
@@ -164,77 +179,123 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Button */}
-      <div className="flex-1 flex justify-end lg:hidden">
-        <button
-          onClick={() => setMobileMenuOpen((prev) => !prev)}
-          aria-label="Toggle menu"
-          className="p-2 focus:outline-none"
-        >
+      <Drawer
+        open={mobileMenuOpen}
+        onOpenChange={setMobileMenuOpen}
+        direction="left"
+      >
+        <DrawerTrigger className="md:hidden">
           <Menu className="w-6 h-6 text-gray-900" />
-        </button>
-      </div>
-
-      {/* Mobile Menu Panel */}
-      {mobileMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white shadow-lg z-40 lg:hidden">
-          <ul className="flex flex-col p-4 space-y-4">
+        </DrawerTrigger>
+        <DrawerContent className="h-full w-[20rem]">
+          <DrawerHeader>
+            <DrawerTitle className="flex items-center justify-between">
+              <Link href="/">
+                <Image
+                  src="/logo.png"
+                  alt="Company logo"
+                  width={230}
+                  height={150}
+                  className="object-contain"
+                />
+              </Link>
+              <XIcon
+                className="w-6 h-6 text-gray-900 cursor-pointer"
+                onClick={() => setMobileMenuOpen(false)}
+              />
+            </DrawerTitle>
+          </DrawerHeader>
+          <hr />
+          <div className="flex flex-col gap-3 mt-4 px-4">
             {NAV_LINKS.map((link) => (
-              <li key={link.key}>
+              <div key={link.key}>
                 <Link
                   href={link.href}
-                  className={`regular-16 text-gray-900 cursor-pointer ${pathname === link.href ? "underline" : ""}`}
+                  className={`regular-16 text-gray-900 !font-bold transition-all hover:text-blue-900 ${
+                    pathname === link.href && "underline"
+                  }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
-              </li>
-            ))}
-
-            {/* Mobile Products Menu */}
-            <li>
-              <div className="space-y-2">
-                <p className="font-bold text-gray-900">Products</p>
-                {loading ? (
-                  <div className="text-sm text-gray-500">Loading...</div>
-                ) : (
-                  <div className="space-y-2 ml-4">
-                    {categories.map((category) => (
-                      <div key={category.id}>
-                        <Link
-                          href={`/${category.slug}`}
-                          className={`block text-gray-700 hover:text-blue-900 transition-all ${
-                            pathname === `/${category.slug}` ? "text-blue-900 font-semibold" : ""
-                          }`}
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          {category.name}
-                        </Link>
-                        {category.subcategories.length > 0 && (
-                          <div className="ml-4 mt-1 space-y-1">
-                            {category.subcategories.map((subcategory) => (
-                              <Link
-                                key={subcategory.id}
-                                href={`/${subcategory.slug}`}
-                                className={`block text-sm text-gray-600 hover:text-blue-700 transition-all ${
-                                  pathname === `/${subcategory.slug}` ? "text-blue-700 font-medium" : ""
-                                }`}
-                                onClick={() => setMobileMenuOpen(false)}
-                              >
-                                • {subcategory.name}
-                              </Link>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
-            </li>
-          </ul>
-        </div>
-      )}
+            ))}
+            <Accordion type="multiple">
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="regular-16 text-gray-900 !font-bold transition-all hover:text-blue-900">
+                  Products
+                </AccordionTrigger>
+                <AccordionContent className="border-l ml-5">
+                  {loading ? (
+                    <div className="p-4 flex items-center justify-center">
+                      <LoadingSpinner />
+                    </div>
+                  ) : categories.length > 0 ? (
+                    <div className="space-y-3 mt-2">
+                      {categories.map((category) => (
+                        <div
+                          key={category.id}
+                          className="group pl-4"
+                        >
+                          {!category.subcategories.length ? (
+                            <Link
+                              href={`/${category.slug}`}
+                              className={`regular-16 text-gray-900 !font-bold transition-all ${
+                                category.id === activeCategory ? "bg-blue-50" : ""
+                              }`}
+                              onClick={() => {
+                                setActiveCategory(category.id);
+                                setMobileMenuOpen(false);
+                              }}
+                            >
+                              {category.name}
+                            </Link>
+                          ) : (
+                            <Accordion
+                              type="single"
+                              collapsible
+                            >
+                              <AccordionItem value={`item-${category.id}`}>
+                                <AccordionTrigger className="text-black font-semibold transition-all text-sm rounded ">
+                                  {category.name}
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  {category.subcategories.map((subcategory) => (
+                                    <Link
+                                      key={subcategory.id}
+                                      href={`/${category.slug}/${subcategory.slug}`}
+                                      className={`block p-2 text-black font-semibold transition-all text-sm rounded ${
+                                        subcategory.id === activeSubcategory ? "bg-blue-50" : ""
+                                      }`}
+                                      onClick={() => {
+                                        setActiveSubcategory(subcategory.id);
+                                        setMobileMenuOpen(false);
+                                      }}
+                                    >
+                                      {subcategory.name}
+                                    </Link>
+                                  ))}
+                                </AccordionContent>
+                              </AccordionItem>
+                            </Accordion>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-gray-500">No categories found.</div>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+
+          <DrawerFooter>
+            <Button>Submit</Button>
+            <DrawerClose>Cancel</DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </nav>
   );
 };

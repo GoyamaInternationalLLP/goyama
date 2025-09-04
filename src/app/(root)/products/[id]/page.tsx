@@ -2,6 +2,8 @@ import { getProductById } from "@/actions/products";
 import EnquireProductForm from "@/components/EnquireProductForm";
 import ProductMediaSlider from "@/components/ProductMediaSlider";
 import Image from "next/image";
+import Link from "next/link";
+import { FaStar } from "react-icons/fa";
 
 type ProductDetail = {
   category: {
@@ -11,7 +13,6 @@ type ProductDetail = {
     updatedAt: Date;
     slug: string;
     description: string | null;
-    isActive: boolean;
     imageUrl: string | null;
   };
   id: string;
@@ -21,7 +22,7 @@ type ProductDetail = {
   title: string;
   description: string | null;
   categoryId: string;
-  isActive: boolean;
+  isPremium: boolean;
   images: string[];
   videos: string[];
 };
@@ -60,8 +61,25 @@ const ProductDetailPage = async ({ params }: { params: Promise<{ id: string }> }
           </div>
 
           <div className="my-auto">
-            <h2 className="text-2xl font-bold mb-4">Product Details</h2>
-            <p className="text-gray-700">{product?.description}</p>
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+              Product Details
+              {product.isPremium && (
+                <div className="bg-fuchsia-600 text-white text-xs font-semibold px-2 py-1 rounded z-10 flex items-center justify-center gap-1">
+                  Premium
+                  <FaStar />
+                </div>
+              )}
+            </h2>
+            <p className="text-gray-700 text-justify">{product?.description}</p>
+            <br />
+            {product?.isPremium && (
+              <p className="text-fuchsia-800 text-justify p-2 rounded border border-fuchsia-300 bg-fuchsia-200">
+                {product?.title} from our Premium Series is crafted with superior materials and refined design. It
+                offers a luxurious appearance with unmatched durability, making it the perfect choice for high-end
+                interiors. Our Premium Series combines exclusive design, exceptional craftsmanship, and enduring
+                performance, ensuring {product?.title} stands out as a statement of both style and substance.
+              </p>
+            )}
             <p className="text-gray-500 text-sm mt-4">
               Want to know more about this product? Click the button below to get in touch with us!
             </p>

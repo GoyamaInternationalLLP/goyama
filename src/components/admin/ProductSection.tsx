@@ -9,10 +9,11 @@ import { Category, Product } from "../../../types";
 import { Button, buttonVariants } from "../ui/button";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import LoadingSpinner from "../LoadingSpinner";
 import Image from "next/image";
 import { deleteProduct } from "@/actions/products";
+import { Badge } from "../ui/badge";
+import { useRouter } from "nextjs-toploader/app";
 
 const ProductSection = ({ products, categories }: { products: Product[]; categories: Category[] }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -103,7 +104,7 @@ const ProductSection = ({ products, categories }: { products: Product[]; categor
             <TableRow>
               <TableHead>Product</TableHead>
               <TableHead>Category</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Premium Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -133,13 +134,9 @@ const ProductSection = ({ products, categories }: { products: Product[]; categor
                 </TableCell>
                 <TableCell>{product.category!.name}</TableCell>
                 <TableCell>
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      product.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {product.isActive ? "Active" : "Inactive"}
-                  </span>
+                  <Badge variant={product.isPremium ? "default" : "secondary"}>
+                    {product.isPremium ? "Premium" : "Normal"}
+                  </Badge>
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-2">

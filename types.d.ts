@@ -9,7 +9,12 @@ export interface Category {
   description: string | null;
   slug: string;
   imageUrl: string | null;
-  isActive: boolean;
+  parentId: string | null;
+  parent?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
 }
 
 export interface Product {
@@ -20,7 +25,7 @@ export interface Product {
   slug: string;
   description: string | null;
   categoryId: string;
-  isActive: boolean;
+  isPremium: boolean;
   images: string[];
   videos: string[];
   category?: {

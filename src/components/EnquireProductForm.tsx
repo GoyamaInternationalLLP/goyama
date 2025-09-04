@@ -24,6 +24,7 @@ import { Product } from "../../types";
 import LoadingSpinner from "./LoadingSpinner";
 import { Textarea } from "./ui/textarea";
 import { createEnquiry } from "@/actions/enquiries";
+import { FaArrowLeft, FaLongArrowAltLeft } from "react-icons/fa";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -71,108 +72,118 @@ const EnquireProductForm = ({ product }: { product: Product }) => {
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={setOpen}
-    >
-      {isSubmitting && (
-        <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-[100]">
-          <LoadingSpinner />
-        </div>
-      )}
-      <DialogTrigger asChild>
-        <Button className="mt-2 bg-goyama-primary hover:bg-goyama-blue text-white">
-          Enquire Now
-          <TbHandFinger className="inline-block ml-2" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <Form {...form}>
-          <DialogHeader>
-            <DialogTitle>Enquire about {product.title}</DialogTitle>
-            <DialogDescription>Fill out the form below to make an enquiry about this product.</DialogDescription>
-          </DialogHeader>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 py-2"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem className="space-y-0">
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter your name"
-                      {...field}
-                      disabled={isSubmitting}
-                      required
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="space-y-0">
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter your email address"
-                      {...field}
-                      disabled={isSubmitting}
-                      required
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem className="space-y-0">
-                  <FormLabel>Message</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      rows={4}
-                      placeholder="Enter your message"
-                      {...field}
-                      disabled={isSubmitting}
-                      required
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <DialogClose asChild>
+    <div className="flex items-center mt-3">
+      <Dialog
+        open={open}
+        onOpenChange={setOpen}
+      >
+        {isSubmitting && (
+          <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-[100]">
+            <LoadingSpinner />
+          </div>
+        )}
+        <DialogTrigger asChild>
+          <Button className="bg-goyama-primary hover:bg-goyama-blue text-white">
+            Enquire Now
+            <TbHandFinger className="inline-block ml-2" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <Form {...form}>
+            <DialogHeader>
+              <DialogTitle>Enquire about {product.title}</DialogTitle>
+              <DialogDescription>Fill out the form below to make an enquiry about this product.</DialogDescription>
+            </DialogHeader>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 py-2"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="space-y-0">
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your name"
+                        {...field}
+                        disabled={isSubmitting}
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="space-y-0">
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your email address"
+                        {...field}
+                        disabled={isSubmitting}
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem className="space-y-0">
+                    <FormLabel>Message</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={4}
+                        placeholder="Enter your message"
+                        {...field}
+                        disabled={isSubmitting}
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button
+                    variant="outline"
+                    disabled={isSubmitting}
+                    className="mt-2 md:mt-0"
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
                 <Button
-                  variant="outline"
+                  type="submit"
                   disabled={isSubmitting}
-                  className="mt-2 md:mt-0"
+                  className="bg-goyama-primary hover:bg-goyama-blue text-white"
                 >
-                  Cancel
+                  {isSubmitting ? "Submitting..." : "Submit Enquiry"}
                 </Button>
-              </DialogClose>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-goyama-primary hover:bg-goyama-blue text-white"
-              >
-                {isSubmitting ? "Submitting..." : "Submit Enquiry"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+      <Button
+        onClick={() => window.history.back()}
+        variant="secondary"
+        className="ml-4"
+      >
+        <FaLongArrowAltLeft />
+        Go Back
+      </Button>
+    </div>
   );
 };
 

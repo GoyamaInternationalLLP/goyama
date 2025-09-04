@@ -4,15 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 // Get all products with optional pagination, search, and category filter
-export async function getProducts(params?: {
-  page?: number;
-  limit?: number;
-  search?: string;
-  categoryId?: string;
-  isActive?: boolean;
-}) {
+export async function getProducts(params?: { page?: number; limit?: number; search?: string; categoryId?: string }) {
   try {
-    const { page = 1, limit = 10, search, categoryId, isActive } = params || {};
+    const { page = 1, limit = 10, search, categoryId } = params || {};
     const skip = (page - 1) * limit;
 
     const where: any = {};
@@ -27,10 +21,6 @@ export async function getProducts(params?: {
 
     if (categoryId) {
       where.categoryId = categoryId;
-    }
-
-    if (isActive !== undefined) {
-      where.isActive = isActive;
     }
 
     const [products, totalCount] = await Promise.all([
@@ -113,7 +103,6 @@ export async function getProductsByCategorySlug(categorySlug: string, params?: {
       where: { slug: categorySlug },
       include: {
         subcategories: {
-          where: { isActive: true },
           select: { id: true },
         },
       },
@@ -136,7 +125,6 @@ export async function getProductsByCategorySlug(categorySlug: string, params?: {
       prisma.product.findMany({
         where: {
           categoryId: { in: categoryIds },
-          isActive: true,
         },
         skip,
         take: limit,
@@ -162,7 +150,6 @@ export async function getProductsByCategorySlug(categorySlug: string, params?: {
       prisma.product.count({
         where: {
           categoryId: { in: categoryIds },
-          isActive: true,
         },
       }),
     ]);
@@ -195,11 +182,9 @@ export async function getCategoriesForProducts() {
     const mainCategories = await prisma.category.findMany({
       where: {
         parentId: null,
-        isActive: true,
       },
       include: {
         subcategories: {
-          where: { isActive: true },
           select: {
             id: true,
             name: true,

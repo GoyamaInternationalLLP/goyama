@@ -26,7 +26,6 @@ model Category {
   slug        String  @unique
   description String?
   imageUrl    String?
-  isActive    Boolean @default(true)
 
   // Self-referencing for subcategories
   parentId      String? // null for main categories, categoryId for subcategories
@@ -46,7 +45,7 @@ model Product {
   slug        String    @unique
   description String?
   categoryId  String
-  isActive    Boolean   @default(true)
+  isPremium   Boolean   @default(false)
   category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   images      String[]
   videos      String[]

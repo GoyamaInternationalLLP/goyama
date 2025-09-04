@@ -6,13 +6,13 @@ import { Input } from "@/components/ui/input";
 import { authUtils } from "@/lib/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import LoadingSpinner from "../LoadingSpinner";
 import { loginUser } from "@/actions/auth";
+import { useRouter } from "nextjs-toploader/app";
 
 const formSchema = z.object({
   email: z.string().email(),

@@ -19,6 +19,9 @@ import { uploadFile } from "@/lib/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
+const loadHeic2any = async () => (await import("heic2any")).default;
+import { compressImage } from "@/lib/utils";
+
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   slug: z
@@ -29,7 +32,6 @@ const formSchema = z.object({
     }),
   description: z.string().min(1, "Description is required"),
   parentId: z.string().optional(),
-  isActive: z.boolean(),
   image: z
     .instanceof(File)
     .refine((file) => file.size <= 5 * 1024 * 1024, "Max 5MB size")
@@ -46,7 +48,6 @@ interface CategoryWithParent {
   slug: string;
   description: string | null;
   imageUrl: string | null;
-  isActive: boolean;
   parentId: string | null;
   parent?: {
     id: string;
@@ -60,9 +61,10 @@ interface ImageUploadProps {
   onChange: (file: File | undefined) => void;
   disabled?: boolean;
   existingImageUrl: string | null;
+  setIsSubmitting: (isSubmitting: boolean) => void;
 }
 
-const ImageUpload = ({ value, onChange, disabled, existingImageUrl }: ImageUploadProps) => {
+const ImageUpload = ({ value, onChange, disabled, existingImageUrl, setIsSubmitting }: ImageUploadProps) => {
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [hasNewImage, setHasNewImage] = useState(false);
@@ -112,13 +114,32 @@ const ImageUpload = ({ value, onChange, disabled, existingImageUrl }: ImageUploa
   );
 
   const handleFileSelect = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (disabled) return;
 
       const files = e.target.files;
       if (files && files[0]) {
-        onChange(files[0]);
-        setHasNewImage(true);
+        let file = files[0];
+        try {
+          setIsSubmitting(true);
+          if (file.type === "image/heic" || file.type === "image/heif" || file.name.toLowerCase().endsWith(".heic")) {
+            const heic2any = await loadHeic2any();
+            const convertedBlob = await heic2any({ blob: file, toType: "image/jpeg" });
+            file = new File([convertedBlob as Blob], file.name.replace(/\.heic$/i, ".jpg"), {
+              type: "image/jpeg",
+            });
+            console.log("Converted HEIC → JPEG:", file);
+          }
+
+          if (file.size > 10 * 1024 * 1024) file = await compressImage(file, 10);
+          onChange(files[0]);
+          setHasNewImage(true);
+        } catch (err) {
+          console.error("HEIC conversion error:", err);
+          toast.error("Failed to convert HEIC image. Please try another file.");
+        } finally {
+          setIsSubmitting(false);
+        }
       }
     },
     [onChange, disabled]
@@ -270,7 +291,6 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
       slug: categoryData?.slug || "",
       description: categoryData?.description || "",
       parentId: categoryData?.parentId || undefined,
-      isActive: categoryData?.isActive ?? true,
       image: undefined,
     },
   });
@@ -332,7 +352,6 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
         slug: values.slug,
         description: values.description,
         parentId: values.parentId === "no-parent" ? null : values.parentId,
-        isActive: values.isActive,
         imageUrl: imageUrl,
       };
 
@@ -495,26 +514,6 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
                     </FormItem>
                   )}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="isActive"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">Category Status</FormLabel>
-                        <FormDescription>Inactive categories won't be visible to customers.</FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          disabled={isSubmitting}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
               </div>
 
               {/* Show parent info for editing subcategories */}
@@ -546,6 +545,7 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
                         onChange={onChange}
                         disabled={isSubmitting}
                         existingImageUrl={categoryData ? categoryData.imageUrl : ""}
+                        setIsSubmitting={setIsSubmitting}
                         {...field}
                       />
                     </FormControl>

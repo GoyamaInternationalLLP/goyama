@@ -9,7 +9,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Search, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IoEye } from "react-icons/io5";
 import { toast } from "sonner";
@@ -20,6 +19,7 @@ import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { deleteEnquiry } from "@/actions/enquiries";
+import { useRouter } from "nextjs-toploader/app";
 
 const EnquiriesSection = ({ enquiries, categories }: { enquiries: Enquiry[]; categories: Category[] }) => {
   const [searchTerm, setSearchTerm] = useState("");
