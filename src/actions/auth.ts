@@ -1,10 +1,8 @@
 "use server";
 
+import { authUtils, generateToken, hashPassword, serverAuthUtils, verifyPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { hashPassword, verifyPassword, generateToken, serverAuthUtils, authUtils } from "@/lib/auth";
-import { cookies } from "next/headers";
 
-// Login user
 export async function loginUser(email: string, password: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -41,10 +39,8 @@ export async function loginUser(email: string, password: string) {
   }
 }
 
-// Register user
 export async function registerUser(name: string, email: string, password: string) {
   try {
-    // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -90,10 +86,8 @@ export async function registerUser(name: string, email: string, password: string
   }
 }
 
-// Logout user
 export async function logoutUser() {
   try {
-    // Clear cookies using the serverAuthUtils
     serverAuthUtils.clearAuthCookies();
 
     return {
@@ -108,7 +102,6 @@ export async function logoutUser() {
   }
 }
 
-// Get current user from server-side cookies
 export async function getCurrentUserAction() {
   try {
     const authToken = authUtils.getToken();
@@ -120,7 +113,6 @@ export async function getCurrentUserAction() {
       };
     }
 
-    // Use the verifyToken function from auth.ts
     const { verifyToken } = await import("@/lib/auth");
     const decoded = verifyToken(authToken);
 

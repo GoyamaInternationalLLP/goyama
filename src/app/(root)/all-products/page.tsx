@@ -25,8 +25,6 @@ const AllProductsPage = async () => {
 
   const categories = categoriesResponse.data?.categories || [];
 
-  console.log(categories[0]?.subcategories);
-
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Hero Section */}

@@ -128,7 +128,6 @@ const ImageUpload = ({ value, onChange, disabled, existingImageUrl, setIsSubmitt
             file = new File([convertedBlob as Blob], file.name.replace(/\.heic$/i, ".jpg"), {
               type: "image/jpeg",
             });
-            console.log("Converted HEIC → JPEG:", file);
           }
 
           if (file.size > 10 * 1024 * 1024) file = await compressImage(file, 10);
@@ -334,8 +333,6 @@ const CategoryForm = ({ type, categoryData }: { type: "create" | "edit"; categor
     setIsSubmitting(true);
 
     try {
-      console.log("Form values:", values);
-
       if (type === "create" && !values.image)
         form.setError("image", { type: "manual", message: "Image is required for new categories" });
 

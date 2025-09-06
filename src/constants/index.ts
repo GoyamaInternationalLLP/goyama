@@ -5,17 +5,14 @@ import { HiOutlineUserGroup } from "react-icons/hi";
 import { LuLeaf } from "react-icons/lu";
 import { FaHandshake } from "react-icons/fa";
 
-// constants.ts
 export const NAV_LINKS = [
   { href: "/", key: "home", label: "Home" },
   { href: "/about", key: "how_goyama_works", label: "About Us" },
   { href: "/contact", key: "contact_us", label: "Contact Us" },
 ];
 
-// CAMP SECTION
 export const PEOPLE_URL = ["/person-1.png", "/person-2.png", "/person-3.png", "/person-4.png"];
 
-// FEATURES SECTION
 export const FEATURES = [
   {
     title: " Quartz",
@@ -47,7 +44,6 @@ export const FEATURES = [
   },
 ];
 
-// FOOTER SECTION
 export const FOOTER_LINKS = [
   {
     title: "Learn More",
@@ -82,7 +78,6 @@ export const FOOTER_CONTACT_INFO = {
   ],
 };
 
-//Values for about us
 export const VALUES = [
   {
     title: "Integrity in Every Shipment",

@@ -35,22 +35,6 @@ export interface Product {
   };
 }
 
-// export interface ProductImage {
-//   id: string;
-//   productId: string;
-//   imageUrl: string;
-//   altText?: string;
-//   isPrimary: boolean;
-// }
-
-// export interface ProductVideo {
-//   id: string;
-//   productId: string;
-//   videoUrl: string;
-//   thumbnailUrl?: string;
-//   title?: string;
-// }
-
 export interface Enquiry {
   name: string;
   id: string;

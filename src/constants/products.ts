@@ -1,4 +1,3 @@
-// constants/products.ts
 export type IProduct = {
   id: number;
   title: string;

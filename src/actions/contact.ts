@@ -3,7 +3,6 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-// Get all contacts
 export async function getContacts(params?: { page?: number; limit?: number; search?: string }) {
   try {
     const { page = 1, limit = 10, search } = params || {};
@@ -50,7 +49,6 @@ export async function getContacts(params?: { page?: number; limit?: number; sear
   }
 }
 
-// Create contact
 export async function createContact(contactData: any) {
   try {
     const contact = await prisma.contact.create({
@@ -73,7 +71,6 @@ export async function createContact(contactData: any) {
   }
 }
 
-// Delete contact
 export async function deleteContact(id: string) {
   try {
     const contact = await prisma.contact.findUnique({

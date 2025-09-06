@@ -3,7 +3,6 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-// Get all main categories with subcategories
 export async function getCategories(params?: {
   page?: number;
   limit?: number;
@@ -15,7 +14,7 @@ export async function getCategories(params?: {
     const skip = (page - 1) * limit;
 
     const where: any = {
-      parentId: null, // Only main categories
+      parentId: null,
     };
 
     if (search) {
@@ -74,7 +73,6 @@ export async function getCategories(params?: {
   }
 }
 
-// Get all categories (main + subcategories) for admin
 export async function getAllCategoriesFlat(params?: { page?: number; limit?: number; search?: string }) {
   try {
     const { page = 1, limit = 50, search } = params || {};
@@ -95,10 +93,7 @@ export async function getAllCategoriesFlat(params?: { page?: number; limit?: num
         where,
         // skip,
         take: limit,
-        orderBy: [
-          { parentId: "asc" }, // Main categories first
-          { createdAt: "desc" },
-        ],
+        orderBy: [{ parentId: "asc" }, { createdAt: "desc" }],
         include: {
           parent: {
             select: {
@@ -139,7 +134,6 @@ export async function getAllCategoriesFlat(params?: { page?: number; limit?: num
   }
 }
 
-// Get category by ID
 export async function getCategoryById(id: string) {
   try {
     const category = await prisma.category.findUnique({
@@ -189,7 +183,6 @@ export async function getCategoryById(id: string) {
   }
 }
 
-// Get category by slug with all products (including from subcategories)
 export async function getCategoryBySlug(slug: string) {
   try {
     const category = await prisma.category.findUnique({
@@ -231,7 +224,6 @@ export async function getCategoryBySlug(slug: string) {
       };
     }
 
-    // Combine products from main category and all subcategories
     const allProducts = [...category.products, ...category.subcategories.flatMap((sub) => sub.products)];
 
     return {
@@ -250,7 +242,6 @@ export async function getCategoryBySlug(slug: string) {
   }
 }
 
-// Get main categories for dropdown/select
 export async function getMainCategories() {
   try {
     const categories = await prisma.category.findMany({
@@ -278,10 +269,8 @@ export async function getMainCategories() {
   }
 }
 
-// Create category
 export async function createCategory(categoryData: any) {
   try {
-    // Check if slug already exists
     const existingCategory = await prisma.category.findUnique({
       where: { slug: categoryData.slug },
     });
@@ -293,7 +282,6 @@ export async function createCategory(categoryData: any) {
       };
     }
 
-    // If parentId is provided, verify parent exists
     if (categoryData.parentId) {
       const parentCategory = await prisma.category.findUnique({
         where: { id: categoryData.parentId },
@@ -337,10 +325,8 @@ export async function createCategory(categoryData: any) {
   }
 }
 
-// Update category
 export async function updateCategory(id: string, categoryData: any) {
   try {
-    // Check if category exists
     const existingCategory = await prisma.category.findUnique({
       where: { id },
     });
@@ -352,7 +338,6 @@ export async function updateCategory(id: string, categoryData: any) {
       };
     }
 
-    // Check if slug already exists (excluding current category)
     if (categoryData.slug && categoryData.slug !== existingCategory.slug) {
       const slugExists = await prisma.category.findUnique({
         where: { slug: categoryData.slug },
@@ -366,7 +351,6 @@ export async function updateCategory(id: string, categoryData: any) {
       }
     }
 
-    // If parentId is provided, verify parent exists and prevent circular reference
     if (categoryData.parentId) {
       if (categoryData.parentId === id) {
         return {
@@ -386,7 +370,6 @@ export async function updateCategory(id: string, categoryData: any) {
         };
       }
 
-      // Check if the parent is a subcategory of current category (prevent circular reference)
       if (parentCategory.parentId === id) {
         return {
           success: false,
@@ -426,7 +409,6 @@ export async function updateCategory(id: string, categoryData: any) {
   }
 }
 
-// Delete category
 export async function deleteCategory(id: string) {
   try {
     const category = await prisma.category.findUnique({

@@ -27,8 +27,7 @@ model Category {
   description String?
   imageUrl    String?
 
-  // Self-referencing for subcategories
-  parentId      String? // null for main categories, categoryId for subcategories
+  parentId      String?
   parent        Category?  @relation("CategorySubcategory", fields: [parentId], references: [id], onDelete: Cascade)
   subcategories Category[] @relation("CategorySubcategory")
 
@@ -79,28 +78,6 @@ model Contact {
 
   @@map("contacts")
 }
-
-// model ProductImage {
-//   id        String  @id @default(cuid())
-//   productId String
-//   imageUrl  String
-//   altText   String?
-//   isPrimary Boolean @default(false)
-//   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-//   @@map("product_images")
-// }
-
-// model ProductVideo {
-//   id           String  @id @default(cuid())
-//   productId    String
-//   videoUrl     String
-//   thumbnailUrl String?
-//   title        String?
-//   product      Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-//   @@map("product_videos")
-// }
 
 enum Role {
   USER

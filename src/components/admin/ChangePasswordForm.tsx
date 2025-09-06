@@ -42,11 +42,9 @@ const ChangePasswordForm = () => {
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     setIsSubmitting(true);
     try {
       const res = await updateUserPassword(user!.id, values.password);
-      console.log(res);
       if (res.success) {
         form.reset();
         toast.success("Password updated successfully");

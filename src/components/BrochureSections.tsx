@@ -6,7 +6,7 @@ const sections = [
     title: "Available Sizes",
     description:
       "Custom fabrication services are available for large volume orders. Minimum quantity requirements apply. Please contact us for eligibility and details.",
-    imgSrc: "/img55.png", // replace with your image path
+    imgSrc: "/img55.png",
     imgAlt: "Available sizes diagram",
     reverse: false,
   },
@@ -14,7 +14,7 @@ const sections = [
     title: "Edge Profiles",
     description:
       "We recommend a minimum 1/8″ radius on both the top and bottom of any edge. For high-traffic areas, a 1/4″ radius is best for added safety and durability.",
-    imgSrc: "/img-21.png", // replace with your image path
+    imgSrc: "/img-21.png",
     imgAlt: "Edge profiles diagram",
     reverse: true,
   },

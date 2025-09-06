@@ -3,7 +3,6 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-// Get all products with optional pagination, search, and category filter
 export async function getProducts(params?: { page?: number; limit?: number; search?: string; categoryId?: string }) {
   try {
     const { page = 1, limit = 10, search, categoryId } = params || {};
@@ -63,7 +62,6 @@ export async function getProducts(params?: { page?: number; limit?: number; sear
   }
 }
 
-// Get product by ID
 export async function getProductById(id: string) {
   try {
     const product = await prisma.product.findUnique({
@@ -93,7 +91,6 @@ export async function getProductById(id: string) {
   }
 }
 
-// Get products by category slug (includes products from subcategories if it's a main category)
 export async function getProductsByCategorySlug(categorySlug: string, params?: { page?: number; limit?: number }) {
   try {
     const { page = 1, limit = 10 } = params || {};
@@ -115,7 +112,6 @@ export async function getProductsByCategorySlug(categorySlug: string, params?: {
       };
     }
 
-    // Build category filter - include main category and its subcategories
     const categoryIds = [category.id];
     if (category.subcategories.length > 0) {
       categoryIds.push(...category.subcategories.map((sub) => sub.id));
@@ -176,7 +172,6 @@ export async function getProductsByCategorySlug(categorySlug: string, params?: {
   }
 }
 
-// Get all categories for product forms (hierarchical structure)
 export async function getCategoriesForProducts() {
   try {
     const mainCategories = await prisma.category.findMany({
@@ -196,7 +191,6 @@ export async function getCategoriesForProducts() {
       orderBy: { name: "asc" },
     });
 
-    // Flatten for form dropdown
     const flatCategories: Array<{
       id: string;
       name: string;
@@ -240,10 +234,8 @@ export async function getCategoriesForProducts() {
   }
 }
 
-// Create product
 export async function createProduct(productData: any) {
   try {
-    // Check if slug already exists
     const existingProduct = await prisma.product.findUnique({
       where: { slug: productData.slug },
     });
@@ -255,7 +247,6 @@ export async function createProduct(productData: any) {
       };
     }
 
-    // Verify category exists
     const category = await prisma.category.findUnique({
       where: { id: productData.categoryId },
     });
@@ -291,10 +282,8 @@ export async function createProduct(productData: any) {
   }
 }
 
-// Update product
 export async function updateProduct(id: string, productData: any) {
   try {
-    // Check if product exists
     const existingProduct = await prisma.product.findUnique({
       where: { id },
     });
@@ -306,7 +295,6 @@ export async function updateProduct(id: string, productData: any) {
       };
     }
 
-    // Check if slug already exists (excluding current product)
     if (productData.slug && productData.slug !== existingProduct.slug) {
       const slugExists = await prisma.product.findUnique({
         where: { slug: productData.slug },
@@ -320,7 +308,6 @@ export async function updateProduct(id: string, productData: any) {
       }
     }
 
-    // Verify category exists if categoryId is being updated
     if (productData.categoryId) {
       const category = await prisma.category.findUnique({
         where: { id: productData.categoryId },
@@ -359,7 +346,6 @@ export async function updateProduct(id: string, productData: any) {
   }
 }
 
-// Delete product
 export async function deleteProduct(id: string) {
   try {
     const product = await prisma.product.findUnique({

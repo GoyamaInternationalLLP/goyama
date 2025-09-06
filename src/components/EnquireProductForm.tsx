@@ -45,9 +45,7 @@ const EnquireProductForm = ({ product }: { product: Product }) => {
     },
   });
 
-  // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     setIsSubmitting(true);
     try {
       const submitData = {

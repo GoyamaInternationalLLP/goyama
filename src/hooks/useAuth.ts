@@ -18,31 +18,27 @@ export const useAuth = () => {
   useEffect(() => {
     const checkAuth = () => {
       try {
-        // Check if we have valid tokens/cookies
         const hasValidTokens = authUtils.isAuthenticated();
 
         if (hasValidTokens) {
-          // Get user data from localStorage
           const userData = localStorage.getItem("user");
           if (userData) {
             const parsedUser = JSON.parse(userData);
             setUser(parsedUser);
             setIsAuthenticated(true);
           } else {
-            // Tokens exist but no user data - clear auth
             authUtils.clearAuth();
             setUser(null);
             setIsAuthenticated(false);
           }
         } else {
-          // No valid tokens - clear everything
           setUser(null);
           setIsAuthenticated(false);
           localStorage.removeItem("user");
         }
       } catch (error) {
         console.error("Auth check failed:", error);
-        // Clear corrupted data
+
         authUtils.clearAuth();
         localStorage.removeItem("user");
         setUser(null);
@@ -54,7 +50,6 @@ export const useAuth = () => {
 
     checkAuth();
 
-    // Listen for storage changes
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "user" || e.key === null) {
         checkAuth();
@@ -68,7 +63,6 @@ export const useAuth = () => {
     };
   }, []);
 
-  // Login function
   const login = (userData: User, token: string) => {
     setUser(userData);
     setIsAuthenticated(true);
@@ -76,7 +70,6 @@ export const useAuth = () => {
     authUtils.setAuthCookies(token, userData.role);
   };
 
-  // Logout function
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
@@ -84,7 +77,6 @@ export const useAuth = () => {
     authUtils.clearAuth();
   };
 
-  // Helper functions
   const isAdmin = () => user?.role === "ADMIN";
   const isUser = () => user?.role === "USER";
 

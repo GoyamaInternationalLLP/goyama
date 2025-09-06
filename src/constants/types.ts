@@ -1,4 +1,3 @@
-// types.ts
 export interface CardData {
   id: number;
   title: string;

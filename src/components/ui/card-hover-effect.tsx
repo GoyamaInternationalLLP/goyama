@@ -14,7 +14,6 @@ export const HoverEffect = ({ className }: { className?: string }) => {
     <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-10 gap-4", className)}>
       {VALUES.map((item, idx) => (
         <a
-          //   href={item?.link}
           key={idx}
           className="relative group block p-2 h-full w-full"
           onMouseEnter={() => setHoveredIndex(idx)}

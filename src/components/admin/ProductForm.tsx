@@ -1,5 +1,5 @@
 "use client";
-import dynamic from "next/dynamic";
+import { createProduct, getCategoriesForProducts, updateProduct } from "@/actions/products";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -10,15 +10,13 @@ import { cn, compressImage } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Image as ImageIcon, Plus, Trash2, Upload, Video, X } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "nextjs-toploader/app";
 import { useCallback, useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { set, z } from "zod";
-import { Category, Product } from "../../../types";
 import { toast } from "sonner";
+import { z } from "zod";
+import { Product } from "../../../types";
 import LoadingSpinner from "../LoadingSpinner";
-import { getCategories } from "@/actions/categories";
-import { createProduct, updateProduct, getCategoriesForProducts } from "@/actions/products";
-import { useRouter } from "nextjs-toploader/app";
 
 const loadHeic2any = async () => (await import("heic2any")).default;
 
@@ -65,7 +63,6 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-// Image Upload Component
 interface ImageUploadProps {
   value?: File;
   onChange: (file: File | undefined) => void;
@@ -140,7 +137,6 @@ const ImageUpload = ({ value, onChange, disabled, existingImageUrl, onRemove, se
             file = new File([convertedBlob as Blob], file.name.replace(/\.heic$/i, ".jpg"), {
               type: "image/jpeg",
             });
-            console.log("Converted HEIC → JPEG:", file);
           }
 
           if (file.size > 10 * 1024 * 1024) file = await compressImage(file, 10); // Compress to max 10MB
@@ -542,9 +538,6 @@ const ProductForm = ({ type, productData }: { type: "create" | "edit"; productDa
     setIsSubmitting(true);
 
     try {
-      console.log("Form values:", values);
-
-      // Upload new images
       const imageUploads = await Promise.all(
         values.images.map(async (image) => {
           if (image.file) {

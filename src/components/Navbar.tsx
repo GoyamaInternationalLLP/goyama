@@ -60,10 +60,7 @@ const Navbar: React.FC = () => {
     const fetchData = async () => {
       try {
         const res = await getCategories({ includeSubcategories: true });
-        console.log(res);
-        if (res.success && res.data) {
-          setCategories(res.data.categories);
-        }
+        if (res.success && res.data) setCategories(res.data.categories);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       } finally {

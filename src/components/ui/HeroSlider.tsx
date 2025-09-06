@@ -18,7 +18,6 @@ export default function HeroSlider({ slides }: { slides: Slide[] }) {
   const [current, setCurrent] = useState(0);
   const router = useRouter();
 
-  // Auto slide every 7s
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);

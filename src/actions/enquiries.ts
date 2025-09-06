@@ -3,7 +3,6 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-// Get all enquiries
 export async function getEnquiries(params?: { page?: number; limit?: number; search?: string }) {
   try {
     const { page = 1, limit = 10, search } = params || {};
@@ -68,7 +67,6 @@ export async function getEnquiries(params?: { page?: number; limit?: number; sea
   }
 }
 
-// Create enquiry
 export async function createEnquiry(enquiryData: any) {
   try {
     const enquiry = await prisma.enquiry.create({
@@ -91,7 +89,6 @@ export async function createEnquiry(enquiryData: any) {
   }
 }
 
-// Delete enquiry
 export async function deleteEnquiry(id: string) {
   try {
     const enquiry = await prisma.enquiry.findUnique({

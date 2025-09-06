@@ -48,15 +48,12 @@ const AllProductsContent = ({ categories }: AllProductsContentProps) => {
   const [filterType, setFilterType] = useState<"all" | "main" | "sub">("all");
   const [sortBy, setSortBy] = useState<"name" | "products" | "subcategories">("name");
 
-  // Filter and sort categories
   const filteredCategories = categories
     .filter((category) => {
-      // Search filter
       const matchesSearch =
         category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         category.description?.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // Type filter
       const matchesType =
         filterType === "all" ||
         (filterType === "main" && !category.parentId) ||

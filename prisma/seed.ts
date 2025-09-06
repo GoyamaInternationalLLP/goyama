@@ -4,7 +4,6 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create admin user
   const adminPassword = await hashPassword("admin123");
 
   const admin = await prisma.user.upsert({

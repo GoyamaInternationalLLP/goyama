@@ -30,7 +30,6 @@ const DownloadBrochureSection = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     window.open("https://drive.google.com/drive/folders/16OYn4ih_SoqvZ0eGDmRz45jkmzkThHeG", "_blank");
     setIsSubmitted(true);
   }

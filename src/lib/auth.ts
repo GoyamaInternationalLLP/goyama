@@ -40,17 +40,14 @@ export const getAuthUser = async (request: NextRequest) => {
   return user;
 };
 
-// Client-side auth utilities for cookie management
 export const authUtils = {
-  // Set auth cookies
   setAuthCookies: (token: string, role: string) => {
-    const maxAge = 7 * 24 * 60 * 60; // 7 days in seconds
+    const maxAge = 7 * 24 * 60 * 60;
 
     document.cookie = `authToken=${token}; path=/; max-age=${maxAge}; samesite=lax`;
     document.cookie = `userRole=${role}; path=/; max-age=${maxAge}; samesite=lax`;
   },
 
-  // Get cookie value
   getCookie: (name: string): string | null => {
     if (typeof document === "undefined") return null;
 
@@ -63,41 +60,34 @@ export const authUtils = {
     return null;
   },
 
-  // Check if user is authenticated
   isAuthenticated: (): boolean => {
     const token = authUtils.getCookie("authToken");
     const role = authUtils.getCookie("userRole");
     return !!(token && role);
   },
 
-  // Check if user is admin
   isAdmin: (): boolean => {
     const role = authUtils.getCookie("userRole");
     return role === "ADMIN";
   },
 
-  // Get auth token
   getToken: (): string | null => {
     return authUtils.getCookie("authToken");
   },
 
-  // Get user role
   getRole: (): string | null => {
     return authUtils.getCookie("userRole");
   },
 
-  // Clear auth cookies
   clearAuth: () => {
     document.cookie = "authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
     document.cookie = "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
   },
 };
 
-// Server-side auth utilities
 export const serverAuthUtils = {
-  // For server components and API routes
   setAuthCookies: (token: string, role: string) => {
-    const maxAge = 7 * 24 * 60 * 60; // 7 days in seconds
+    const maxAge = 7 * 24 * 60 * 60;
 
     return [
       `authToken=${token}; Path=/; Max-Age=${maxAge}; SameSite=Lax`,
@@ -105,7 +95,6 @@ export const serverAuthUtils = {
     ];
   },
 
-  // Clear auth cookies
   clearAuthCookies: () => {
     return [
       "authToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;",

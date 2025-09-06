@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
-// Update user password
 export async function updateUserPassword(id: string, password: string) {
   try {
     const user = await prisma.user.findUnique({

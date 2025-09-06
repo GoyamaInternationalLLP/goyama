@@ -26,17 +26,12 @@ const FeaturesSection = () => {
   const lastTimeRef = useRef<number>(0);
   const [categories, setCategories] = useState<Category[]>([]);
 
-  // Create duplicated array for infinite scroll
   const duplicatedCategories = [...categories, ...categories, ...categories];
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await getCategories({ includeSubcategories: true });
-      console.log(res);
       if (res.success && res.data) {
-        // Filter to get only:
-        // 1. Main categories without subcategories (parentId is null AND subcategories array is empty)
-        // 2. Subcategories (parentId is not null)
         const filteredCategories = res.data.categories.flatMap((cat) =>
           cat.subcategories && cat.subcategories.length > 0
             ? cat.subcategories.map((sub) => ({
@@ -45,7 +40,6 @@ const FeaturesSection = () => {
               }))
             : [cat]
         );
-        console.log("Filtered Categories:", filteredCategories);
 
         // @ts-ignore
         setCategories(filteredCategories);
@@ -75,7 +69,6 @@ const FeaturesSection = () => {
     return () => window.removeEventListener("resize", updateItemWidth);
   }, []);
 
-  // Smooth infinite scroll animation
   useEffect(() => {
     if (!isPlaying || isDragging || !itemWidth) return;
 
@@ -83,7 +76,7 @@ const FeaturesSection = () => {
       if (!lastTimeRef.current) lastTimeRef.current = currentTime;
 
       const deltaTime = currentTime - lastTimeRef.current;
-      const speed = 50; // pixels per second
+      const speed = 50;
       const moveDistance = (speed * deltaTime) / 1000;
 
       setCurrentTranslate((prev) => {
@@ -114,7 +107,6 @@ const FeaturesSection = () => {
     };
   }, [isPlaying, isDragging, itemWidth, categories.length]);
 
-  // Handle drag start
   const handleDragStart = (clientX: number) => {
     setIsDragging(true);
     setStartX(clientX);
@@ -122,7 +114,6 @@ const FeaturesSection = () => {
     setDraggedDistance(0);
   };
 
-  // Handle drag move
   const handleDragMove = (clientX: number) => {
     if (!isDragging) return;
 
@@ -132,11 +123,9 @@ const FeaturesSection = () => {
 
     setDraggedDistance(distance);
 
-    // Apply drag with some resistance for smoother feel
     const dragMultiplier = 1.2;
     const newTranslate = startTranslate + diff * dragMultiplier;
 
-    // Handle infinite boundaries
     const resetPoint = -(categories.length * itemWidth);
 
     if (newTranslate > 0) {
@@ -148,18 +137,15 @@ const FeaturesSection = () => {
     }
   };
 
-  // Handle drag end
   const handleDragEnd = () => {
     if (!isDragging) return;
 
     setIsDragging(false);
 
-    // Add momentum/inertia based on drag distance
     if (draggedDistance > 50) {
       const momentum = Math.min(draggedDistance * 2, 200);
       const direction = startX > startX + draggedDistance ? -1 : 1;
 
-      // Apply momentum
       setTimeout(() => {
         if (!isDragging) {
           setCurrentTranslate((prev) => {
@@ -177,19 +163,16 @@ const FeaturesSection = () => {
       }, 50);
     }
 
-    // Reset dragged distance after a delay to prevent accidental clicks
     setTimeout(() => {
       setDraggedDistance(0);
     }, 200);
   };
 
-  // Mouse events
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     handleDragStart(e.clientX);
   };
 
-  // Touch events
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault();
     handleDragStart(e.touches[0].clientX);
@@ -200,9 +183,7 @@ const FeaturesSection = () => {
     handleDragMove(e.touches[0].clientX);
   };
 
-  // Handle card clicks - prevent if dragged significantly
   const handleCardClick = (e: React.MouseEvent, url: string) => {
-    // Prevent click if user dragged more than 10px
     if (draggedDistance > 10) {
       e.preventDefault();
       e.stopPropagation();
@@ -215,7 +196,6 @@ const FeaturesSection = () => {
     setIsPlaying(!isPlaying);
   };
 
-  // Global event listeners for smooth dragging
   useEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (isDragging) {

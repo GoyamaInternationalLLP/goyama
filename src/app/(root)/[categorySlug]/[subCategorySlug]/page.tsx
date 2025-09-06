@@ -59,7 +59,6 @@ interface ProductWithCategory {
 const ProductsPage = async ({ params }: { params: Promise<{ categorySlug: string; subCategorySlug: string }> }) => {
   const { subCategorySlug } = await params;
 
-  // Get category details with subcategories
   const categoryResponse = await getCategoryBySlug(subCategorySlug);
 
   if (!categoryResponse?.success) {
