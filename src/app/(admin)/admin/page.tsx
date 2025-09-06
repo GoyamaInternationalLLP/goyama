@@ -10,10 +10,10 @@ import { Badge } from "@/components/ui/badge";
 
 export default async function AdminDashboard() {
   const [prodRes, catRes, enqRes, conRes] = await Promise.all([
-    getProducts({ limit: 5 }),
-    getCategories({ limit: 5 }),
-    getEnquiries({ limit: 5 }),
-    getContacts({ limit: 5 }),
+    getProducts(),
+    getCategories(),
+    getEnquiries(),
+    getContacts(),
   ]);
 
   if (!prodRes.success || !catRes.success || !enqRes.success || !conRes.success) {

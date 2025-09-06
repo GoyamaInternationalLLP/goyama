@@ -1,10 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
-import ProductCard from "@/components/ProductCard";
-import { getProductsByCategorySlug } from "@/actions/products";
 import { getCategoryBySlug } from "@/actions/categories";
 import { ChevronRight, Home, Package } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import Link from "next/link";
+import { FaStar } from "react-icons/fa";
 
 interface CategoryWithSubcategories {
   id: string;
@@ -100,7 +98,7 @@ const ProductsPage = async ({ params }: { params: Promise<{ categorySlug: string
   const allProducts = category.allProducts || [];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="bg-gray-100">
       {/* Header Image */}
       {/* {category.imageUrl && (
         <Image
@@ -190,6 +188,66 @@ const ProductsPage = async ({ params }: { params: Promise<{ categorySlug: string
             </div>
           </div>
         )}
+
+        {/* Products Grid */}
+        {!category.subcategories.length &&
+          (allProducts.length > 0 ? (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 animate-slideup">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  All Products in <br className="block md:hidden" />
+                  <span className="bg-goyama-primary text-white px-1">
+                    {category.parent?.name} {category.name}
+                  </span>
+                </h2>
+              </div>
+              {/* <FocusCards cards={allProducts} /> */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {allProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="group transition-all hover:-translate-y-2"
+                  >
+                    <Link href={`/products/${product.id}`}>
+                      <div
+                        className={`bg-white relative rounded-lg shadow-sm border overflow-hidden border-gray-200 hover:shadow-lg transition-shadow ${
+                          product.isPremium ? "ring-4 ring-[#FFD700]" : ""
+                        }`}
+                      >
+                        {product.isPremium && (
+                          <div className="absolute top-2 right-2 bg-[#FFD700] text-black text-xs font-semibold px-2 py-1 rounded z-10 flex items-center justify-center gap-1">
+                            Premium
+                            <FaStar />
+                          </div>
+                        )}
+                        {product.images && product.images.length > 0 && (
+                          <Image
+                            src={product.images[0]}
+                            alt={product.title}
+                            width={300}
+                            height={300}
+                            className="w-full h-72 object-cover"
+                          />
+                        )}
+                        <div className="p-4">
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">{product.title}</h3>
+                          {product.description && (
+                            <p className="text-sm text-justify text-gray-600 line-clamp-2">{product.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center animate-slideup">
+              <Package className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Products Yet</h3>
+              <p className="text-gray-600">There are no products in this category at the moment.</p>
+            </div>
+          ))}
       </div>
     </div>
   );

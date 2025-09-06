@@ -64,7 +64,7 @@ const ProductDetailPage = async ({ params }: { params: Promise<{ id: string }> }
             <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
               Product Details
               {product.isPremium && (
-                <div className="bg-fuchsia-600 text-white text-xs font-semibold px-2 py-1 rounded z-10 flex items-center justify-center gap-1">
+                <div className="bg-[#FFD700] text-white text-xs font-semibold px-2 py-1 rounded z-10 flex items-center justify-center gap-1">
                   Premium
                   <FaStar />
                 </div>

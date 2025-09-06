@@ -20,9 +20,9 @@ export default function ContactPage() {
         {/* Business Info Overlay */}
         <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-sm rounded-lg p-4 shadow-lg w-80">
           <h3 className="font-bold text-gray-900 mb-2">Goyama International LLP</h3>
-          <p className="text-sm text-gray-600 mb-1">📍 Billeshwar Tower, Mulund West</p>
+          <p className="text-sm text-gray-600 mb-1">📍 Billeshwar Tower, Mulund West,</p>
           <p className="text-sm text-gray-600 mb-1">Mumbai, Maharashtra 400080</p>
-          <p className="text-sm text-gray-600">📞 +91 12345 67890</p>
+          <p className="text-sm text-gray-600">📞 +91 7303940226 / +91 8384054004</p>
         </div>
       </div>
       <ContactForm />

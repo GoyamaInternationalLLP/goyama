@@ -29,7 +29,7 @@ export async function getCategories(params?: {
     const [categories, totalCount] = await Promise.all([
       prisma.category.findMany({
         where,
-        skip,
+        // skip,
         take: limit,
         orderBy: { createdAt: "desc" },
         include: {
@@ -93,7 +93,7 @@ export async function getAllCategoriesFlat(params?: { page?: number; limit?: num
     const [categories, totalCount] = await Promise.all([
       prisma.category.findMany({
         where,
-        skip,
+        // skip,
         take: limit,
         orderBy: [
           { parentId: "asc" }, // Main categories first

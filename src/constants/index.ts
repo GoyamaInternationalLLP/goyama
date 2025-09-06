@@ -82,14 +82,6 @@ export const FOOTER_CONTACT_INFO = {
   ],
 };
 
-/*export const SOCIALS = {
-  title: "Social",
-  links: [
-    "linkedin.svg",
-    "instagram.svg",
-  ],
-};*/
-
 //Values for about us
 export const VALUES = [
   {
@@ -127,57 +119,5 @@ export const VALUES = [
     description:
       "We value long-term relationships over short-term gains. Every client is a partner, and we go the extra mile to earn and keep their trust.",
     icon: FaHandshake,
-  },
-];
-
-//Collection items on home page
-export const COLLECTION_ITEMS = [
-  {
-    imageUrl: "bg-bg-img-2",
-    title: "JUST RED",
-    subtitle: "Bar Area",
-    peopleJoined: "50+ Ordered",
-  },
-  {
-    imageUrl: "bg-bg-img-1",
-    title: "IMPERIAL WHITE",
-    subtitle: "Living Room",
-    peopleJoined: "50+ Ordered",
-  },
-  {
-    imageUrl: "bg-bg-img-7",
-    title: "Calacatta series",
-    subtitle: "Dining Area",
-    peopleJoined: "50+ Ordered",
-  },
-  {
-    imageUrl: "bg-bg-img-8",
-    title: "OLYMPIA WHITE",
-    subtitle: "Stair Area",
-    peopleJoined: "50+ Ordered",
-  },
-  {
-    imageUrl: "bg-bg-img-4",
-    title: "JUST RED",
-    subtitle: "Bar Area",
-    peopleJoined: "50+ Ordered",
-  },
-  {
-    imageUrl: "bg-bg-img-5",
-    title: "CARRARA BEIGE",
-    subtitle: "Bar Area",
-    peopleJoined: "50+ Ordered",
-  },
-  {
-    imageUrl: "bg-bg-img-3",
-    title: "GRAINY BEIGE",
-    subtitle: "Open Kitchen",
-    peopleJoined: "50+ Ordered",
-  },
-  {
-    imageUrl: "bg-bg-img-6",
-    title: "CARRARA BEIGE",
-    subtitle: "Bar Area",
-    peopleJoined: "50+ Ordered",
   },
 ];

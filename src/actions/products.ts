@@ -26,7 +26,7 @@ export async function getProducts(params?: { page?: number; limit?: number; sear
     const [products, totalCount] = await Promise.all([
       prisma.product.findMany({
         where,
-        skip,
+        // skip,
         take: limit,
         orderBy: { createdAt: "desc" },
         include: {
@@ -126,7 +126,7 @@ export async function getProductsByCategorySlug(categorySlug: string, params?: {
         where: {
           categoryId: { in: categoryIds },
         },
-        skip,
+        // skip,
         take: limit,
         orderBy: { createdAt: "desc" },
         include: {

@@ -23,7 +23,7 @@ export async function getEnquiries(params?: { page?: number; limit?: number; sea
     const [enquiries, totalCount] = await Promise.all([
       prisma.enquiry.findMany({
         where,
-        skip,
+        // skip,
         take: limit,
         orderBy: { createdAt: "desc" },
         include: {

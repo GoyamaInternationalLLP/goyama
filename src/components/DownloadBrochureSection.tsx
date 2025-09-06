@@ -54,7 +54,7 @@ const DownloadBrochureSection = () => {
 
         {/* Smudged icon-like shapes */}
         <div className="absolute top-16 left-1/2 w-8 h-8 bg-blue-600/20 rounded-full blur-md transform rotate-12"></div>
-        <div className="absolute top-1/2 left-16 w-20 h-20 bg-purple-600/25 rounded-full blur-lg"></div>
+        <div className="absolute top-1/4 left-5 md:left-16 w-20 h-20 bg-purple-600/25 rounded-full blur-lg"></div>
         <div className="absolute bottom-16 right-1/3 w-10 h-10 bg-indigo-600/15 rounded-lg blur transform -rotate-12"></div>
 
         {/* Floating dots */}

@@ -1,99 +1,121 @@
-// components/Footer.tsx
-import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FOOTER_LINKS, FOOTER_CONTACT_INFO } from "../constants";
-
-type FooterColumnProps = {
-  title: string;
-  children: React.ReactNode;
-};
-
-const FooterColumn = ({ title, children }: FooterColumnProps) => (
-  <div className="flex flex-col gap-5 min-w-[180px] flex-1">
-    <h4 className="bold-18 whitespace-nowrap text-white">{title}</h4>
-    {children}
-  </div>
-);
+import { CiLinkedin } from "react-icons/ci";
+import { FaInstagram, FaPhone } from "react-icons/fa";
+import { FaLocationDot } from "react-icons/fa6";
+import { MdOutlineMail } from "react-icons/md";
 
 const Footer = () => (
-  <footer className="flexCenter bg-[#18181b] py-12">
-    <div className="padding-container max-container flex w-full flex-col gap-14">
-      {/* Top Section: Logo + Columns */}
-      <div className="flex flex-col items-start justify-center gap-[10%] md:flex-row">
-        <Link
-          href="/"
-          className="mb-10"
-        >
-          <Image
-            src="/logo2.png"
-            alt="logo"
-            width={150}
-            height={190}
-          />
-        </Link>
+  <footer className="bg-[url('/footer.jpg')] text-gray-400 bg-top bg-cover py-12 px-5 md:px-20 flex flex-col gap-10 justify-between">
+    <div className="flex flex-col md:flex-row gap-10 justify-between">
+      <div className="flex flex-col gap-6 w-full">
+        <div className="flex flex-col gap-2">
+          <Link
+            href="/"
+            aria-label="Goyama International Home"
+          >
+            <Image
+              src="/logo-white.png"
+              alt="Goyama International Logo"
+              width={250}
+              height={100}
+            />
+          </Link>
+          <p className="hidden md:block text-justify">
+            We are Goyama International LLP, a globally recognized export firm born from a vision to bridge Indian
+            manufacturing excellence with world-class construction and infrastructure needs
+          </p>
+        </div>
 
-        <div className="flex flex-1 flex-wrap gap-10 sm:justify-between">
-          {/* footer link columns */}
-          {FOOTER_LINKS.map((col) => (
-            <FooterColumn
-              title={col.title}
-              key={col.title}
-            >
-              <ul className="regular-14 flex flex-col gap-4 text-gray-300">
-                {col.links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      {...(link.href.startsWith("http") ? { target: "_blank", rel: "noopener" } : {})}
-                      className="hover:text-blue-400 transition"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </FooterColumn>
-          ))}
-
-          {/* Contact Us */}
-          <div className="min-w-[220px] flex-1">
-            <FooterColumn title={FOOTER_CONTACT_INFO.title}>
-              <ul className="regular-14 flex flex-col gap-3 text-gray-300">
-                {FOOTER_CONTACT_INFO.links.map((link) => (
-                  <li
-                    key={link.label}
-                    className="flex flex-col"
-                  >
-                    <span className="text-gray-300">{link.label}:</span>
-                    <span className="text-blue-400 break-all">
-                      {link.label.toLowerCase().includes("email") ? (
-                        <Link
-                          href={`mailto:${link.value.trim()}`}
-                          className="hover:underline"
-                        >
-                          {link.value.trim()}
-                        </Link>
-                      ) : (
-                        <Link
-                          href={link.value.trim().startsWith("+") ? `tel:${link.value.trim().replace(/ /g, "")}` : "/"}
-                          className="hover:underline"
-                        >
-                          {link.value.trim()}
-                        </Link>
-                      )}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </FooterColumn>
-          </div>
+        <div className="flex items-center gap-3 text-2xl">
+          <Link
+            href="https://www.linkedin.com/company/goyama-international-llp/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white transition-all"
+          >
+            <CiLinkedin />
+          </Link>
+          <Link
+            href="https://www.instagram.com/goyama_international/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white transition-allr"
+          >
+            <FaInstagram />
+          </Link>
         </div>
       </div>
 
-      {/* Bottom Section: Copyright */}
-      <div className="border-t border-gray-700" />
-      <p className="regular-14 w-full text-center text-gray-400">2025 Goyama International | All rights reserved</p>
+      <div className="flex flex-col md:ml-10 gap-5 text-xl md:w-1/2">
+        <Link
+          href="/"
+          className="hover:text-white transition-all"
+        >
+          Home
+        </Link>
+        <Link
+          href="/about"
+          className="hover:text-white transition-all"
+        >
+          About
+        </Link>
+        <Link
+          href="/contact"
+          className="hover:text-white transition-all"
+        >
+          Contact
+        </Link>
+      </div>
+
+      <div className="flex flex-col gap-5 text-lg md:w-1/2">
+        <div className="flex items-center gap-3 hover:text-white transition-all">
+          <FaPhone className="transform scale-x-[-1] w-5" />
+          <a href="tel:+917303940226">
+            +91 7303940226 / <br className="hidden md:block" /> +91 8384054004
+          </a>
+        </div>
+
+        <div className="flex items-center gap-3 hover:text-white transition-all">
+          <FaLocationDot className="w-5" />
+          <a
+            href="https://www.google.com/maps/place/Billeshwar+Tower,+Mulund+West,+Mumbai,+Maharashtra-400080"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Billeshwar Tower, Mulund West, Mumbai, Maharashtra-400080
+          </a>
+        </div>
+
+        <div className="flex items-center gap-3 underline hover:text-white transition-all">
+          <MdOutlineMail className="w-5" />
+          <a href="mailto:info@goyamainternational.com">info@goyamainternational.com</a>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div className="flex flex-col md:flex-row items-center justify-center md:justify-between text-sm text-gray-400">
+      <p className="whitespace-nowrap">
+        &copy; {new Date().getFullYear()} Goyama International LLP. All rights reserved.
+      </p>
+
+      <div className="mt-2 md:mt-0">
+        <Link
+          href="/privacy-policy"
+          className="hover:text-gray-200 transition-all underline"
+        >
+          Privacy Policy
+        </Link>
+        {" | "}
+        <Link
+          href="/terms-of-service"
+          className="hover:text-gray-200 transition-all underline"
+        >
+          Terms of Service
+        </Link>
+      </div>
     </div>
   </footer>
 );

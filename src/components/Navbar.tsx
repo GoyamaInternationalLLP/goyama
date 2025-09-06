@@ -289,11 +289,6 @@ const Navbar: React.FC = () => {
               </AccordionItem>
             </Accordion>
           </div>
-
-          <DrawerFooter>
-            <Button>Submit</Button>
-            <DrawerClose>Cancel</DrawerClose>
-          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     </nav>

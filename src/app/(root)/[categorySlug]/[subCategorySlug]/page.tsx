@@ -1,10 +1,8 @@
+import { getCategoryBySlug } from "@/actions/categories";
+import { Badge } from "@/components/ui/badge";
+import { ChevronRight, Home, Package } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import ProductCard from "@/components/ProductCard";
-import { getCategoryBySlug } from "@/actions/categories";
-import { ChevronRight, Home, Package, Star } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { FocusCards } from "@/components/ui/focus-cards";
 import { FaStar } from "react-icons/fa";
 
 interface CategoryWithSubcategories {
@@ -101,7 +99,7 @@ const ProductsPage = async ({ params }: { params: Promise<{ categorySlug: string
   const allProducts = category.allProducts || [];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="bg-gray-100">
       {/* Header Image */}
       {/* {category.imageUrl && (
         <Image
@@ -175,11 +173,11 @@ const ProductsPage = async ({ params }: { params: Promise<{ categorySlug: string
                   <Link href={`/products/${product.id}`}>
                     <div
                       className={`bg-white relative rounded-lg shadow-sm border overflow-hidden border-gray-200 hover:shadow-lg transition-shadow ${
-                        product.isPremium ? "ring-4 ring-fuchsia-400" : ""
+                        product.isPremium ? "ring-4 ring-[#FFD700]" : ""
                       }`}
                     >
                       {product.isPremium && (
-                        <div className="absolute top-2 right-2 bg-fuchsia-600 text-white text-xs font-semibold px-2 py-1 rounded z-10 flex items-center justify-center gap-1">
+                        <div className="absolute top-2 right-2 bg-[#FFD700] text-black text-xs font-semibold px-2 py-1 rounded z-10 flex items-center justify-center gap-1">
                           Premium
                           <FaStar />
                         </div>
@@ -206,7 +204,7 @@ const ProductsPage = async ({ params }: { params: Promise<{ categorySlug: string
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center animate-slideup">
             <Package className="w-16 h-16 mx-auto text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No Products Yet</h3>
             <p className="text-gray-600">There are no products in this category at the moment.</p>

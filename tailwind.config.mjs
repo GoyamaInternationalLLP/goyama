@@ -165,19 +165,6 @@ module.exports = {
 					'5': 'hsl(var(--chart-5))'
 				}
 			},
-			backgroundImage: {
-				'bg-img-1': "url('/img38.png')",
-				'bg-img-2': "url('/img37.png')",
-				'bg-img-3': "url('/img44.png')",
-				'bg-img-4': "url('/img-25.png')",
-				'bg-img-5': "url('/img30.png')",
-				'bg-img-6': "url('/img31.png')",
-				'bg-img-7': "url('/img39.png')",
-				'bg-img-8': "url('/img40.png')",
-				'feature-bg': "url('/feature-bg.png')",
-				pattern: "url('/pattern.png')",
-				'pattern-2': "url('/pattern-bg.png')"
-			},
 			screens: {
 				xs: '400px',
 				'3xl': '1680px',

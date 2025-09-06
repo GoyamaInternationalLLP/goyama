@@ -22,7 +22,7 @@ export async function getContacts(params?: { page?: number; limit?: number; sear
     const [contacts, totalCount] = await Promise.all([
       prisma.contact.findMany({
         where,
-        skip,
+        // skip,
         take: limit,
         orderBy: { createdAt: "desc" },
       }),
