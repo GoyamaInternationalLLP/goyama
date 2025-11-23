@@ -195,7 +195,7 @@ export const CategoriesSection = ({ categories, pagination, currentSearch }: Cat
                           {category.name}
                         </div>
                         {category.description && (
-                          <div className="text-sm text-gray-500 truncate w-32">{category.description}</div>
+                          <div className="text-sm text-gray-500 truncate w-32 whitespace-pre-line">{category.description}</div>
                         )}
                       </div>
                     </div>
@@ -219,19 +219,16 @@ export const CategoriesSection = ({ categories, pagination, currentSearch }: Cat
                   </TableCell>
                   <TableCell>{category._count?.products || 0}</TableCell>
                   <TableCell>
-                    {category.parentId ? (
-                      <span className="text-gray-400 text-sm">-</span>
-                    ) : (
-                      category._count?.subcategories || 0
-                    )}
+                    {category.parentId ? <span className="text-gray-400 text-sm">-</span> : category._count?.subcategories || 0}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/admin/categories/${category.id}`}
-                        className={`!text-blue-600 hover:text-blue-900 bg-transparent hover:!bg-blue-100 ${buttonVariants(
-                          { variant: "ghost", size: "sm" }
-                        )}`}
+                        className={`!text-blue-600 hover:text-blue-900 bg-transparent hover:!bg-blue-100 ${buttonVariants({
+                          variant: "ghost",
+                          size: "sm",
+                        })}`}
                       >
                         <Edit size={16} />
                       </Link>

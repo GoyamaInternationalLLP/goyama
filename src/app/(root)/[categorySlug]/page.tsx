@@ -146,7 +146,9 @@ const ProductsPage = async ({ params }: { params: Promise<{ categorySlug: string
                 </h1>
               </div>
 
-              {category.description && <p className="text-gray-600 mb-4 text-justify">{category.description}</p>}
+              {category.description && (
+                <p className="text-gray-600 mb-4 text-justify whitespace-pre-line">{category.description}</p>
+              )}
             </div>
           </div>
         </div>
@@ -178,7 +180,7 @@ const ProductsPage = async ({ params }: { params: Promise<{ categorySlug: string
                     <div className="p-4">
                       <h3 className="text-lg font-medium text-gray-900 mb-2">{subcategory.name}</h3>
                       {subcategory.description && (
-                        <p className="text-sm text-gray-600 line-clamp-2">{subcategory.description}</p>
+                        <p className="text-sm text-gray-600 line-clamp-2 whitespace-pre-line">{subcategory.description}</p>
                       )}
                     </div>
                   </div>
@@ -231,7 +233,9 @@ const ProductsPage = async ({ params }: { params: Promise<{ categorySlug: string
                         <div className="p-4">
                           <h3 className="text-lg font-medium text-gray-900 mb-2">{product.title}</h3>
                           {product.description && (
-                            <p className="text-sm text-justify text-gray-600 line-clamp-2">{product.description}</p>
+                            <p className="text-sm text-justify text-gray-600 line-clamp-2 whitespace-pre-line">
+                              {product.description}
+                            </p>
                           )}
                         </div>
                       </div>

@@ -347,10 +347,7 @@ const FeaturesSection = () => {
                       <div
                         className={`card-item ${draggedDistance > 10 ? "no-click" : ""}`}
                         onClick={(e) =>
-                          handleCardClick(
-                            e,
-                            category.parentId ? `/${category.parentId}/${category.slug}` : `/${category.slug}`
-                          )
+                          handleCardClick(e, category.parentId ? `/${category.parentId}/${category.slug}` : `/${category.slug}`)
                         }
                       >
                         <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:border-blue-400/50 cursor-pointer">
@@ -371,7 +368,7 @@ const FeaturesSection = () => {
                             <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">
                               {category.name}
                             </h3>
-                            <p className="text-gray-300 text-sm mb-4 line-clamp-2">{category.description}</p>
+                            <p className="text-gray-300 text-sm mb-4 line-clamp-2 whitespace-pre-line">{category.description}</p>
                             <div className="flex items-center text-blue-400 font-semibold group-hover:text-blue-300 transition-colors duration-300">
                               Explore More
                               <FaLongArrowAltRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
