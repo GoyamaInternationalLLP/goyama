@@ -55,9 +55,7 @@ const CategoryCard = ({ category }: CategoryCardProps) => {
 
           {/* Category Type Badge */}
           <div className="absolute top-3 left-3">
-            <Badge variant={isMainCategory ? "default" : "secondary"}>
-              {isMainCategory ? "Main Category" : "Subcategory"}
-            </Badge>
+            <Badge variant={isMainCategory ? "default" : "secondary"}>{isMainCategory ? "Main Category" : "Subcategory"}</Badge>
           </div>
 
           {/* Quick Stats */}
@@ -87,7 +85,9 @@ const CategoryCard = ({ category }: CategoryCardProps) => {
             </h3>
           </Link>
 
-          {category.description && <p className="text-gray-600 text-sm mb-3 line-clamp-2">{category.description}</p>}
+          {category.description && (
+            <p className="text-gray-600 text-sm mb-3 line-clamp-2 whitespace-pre-line">{category.description}</p>
+          )}
 
           {/* Subcategories Preview */}
           {isMainCategory && hasSubcategories && (

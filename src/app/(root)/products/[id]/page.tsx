@@ -70,14 +70,14 @@ const ProductDetailPage = async ({ params }: { params: Promise<{ id: string }> }
                 </div>
               )}
             </h2>
-            <p className="text-gray-700 text-justify">{product?.description}</p>
+            <p className="text-gray-700 text-justify whitespace-pre-line">{product?.description}</p>
             <br />
             {product?.isPremium && (
               <p className="text-fuchsia-800 text-justify p-2 rounded border border-fuchsia-300 bg-fuchsia-200">
-                {product?.title} from our Premium Series is crafted with superior materials and refined design. It
-                offers a luxurious appearance with unmatched durability, making it the perfect choice for high-end
-                interiors. Our Premium Series combines exclusive design, exceptional craftsmanship, and enduring
-                performance, ensuring {product?.title} stands out as a statement of both style and substance.
+                {product?.title} from our Premium Series is crafted with superior materials and refined design. It offers a
+                luxurious appearance with unmatched durability, making it the perfect choice for high-end interiors. Our Premium
+                Series combines exclusive design, exceptional craftsmanship, and enduring performance, ensuring {product?.title}{" "}
+                stands out as a statement of both style and substance.
               </p>
             )}
             <p className="text-gray-500 text-sm mt-4">

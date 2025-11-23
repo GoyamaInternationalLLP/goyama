@@ -87,7 +87,7 @@ const CategoryList = ({ categories }: CategoryListProps) => {
                   </div>
 
                   {category.description && (
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{category.description}</p>
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2 whitespace-pre-line">{category.description}</p>
                   )}
 
                   {/* Stats */}
