@@ -158,7 +158,8 @@ export default function PrivacyPolicy() {
                   </Link>
                 </li>
                 <li>
-                  <strong>Address:</strong> 123 Goyama Avenue, City, Country
+                  <strong>Address:</strong> Goyama International, A-13, Saidham
+                  Co-op. Housing Society, P.K. Road, Mulund (W), Mumbai-400080
                 </li>
               </ul>
             </section>

@@ -1,6 +1,5 @@
-import Image from "next/image";
-import HeroSlider, { Slide } from "./ui/HeroSlider";
 import { FaBuilding, FaGlobe, FaShip } from "react-icons/fa";
+import HeroSlider, { Slide } from "./ui/HeroSlider";
 
 const slides: Slide[] = [
   {
@@ -13,10 +12,10 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    src: "/ban2.webp",
-    title: "Fly Ash for Infrastructure",
+    src: "/full-body-tiles.webp",
+    title: "Full Body Tiles",
     description:
-      "High-quality Class F fly ash in bulk quantities, suitable for durable construction and eco-friendly cement blends.",
+      "Premium large-format full body tiles with through-body color and a polished finish built for high-traffic floors and elegant, durable interiors.",
     buttonText: "Explore",
   },
   {
@@ -24,7 +23,7 @@ const slides: Slide[] = [
     src: "/ban1.webp",
     title: "Engineered Quartz Slabs",
     description:
-      "Precision-crafted slabs tailored for kitchens, vanities, and commercial interiors — ready-to-install with polished finishes.",
+      "Precision-crafted slabs tailored for kitchens, vanities, and commercial interiors ready-to-install with polished finishes.",
     buttonText: "Contact Us",
   },
 ];

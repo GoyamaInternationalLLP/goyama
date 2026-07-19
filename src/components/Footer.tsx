@@ -79,11 +79,11 @@ const Footer = () => (
         <div className="flex items-center gap-3 hover:text-white transition-all">
           <FaLocationDot className="w-5" />
           <a
-            href="https://www.google.com/maps/place/Billeshwar+Tower,+Mulund+West,+Mumbai,+Maharashtra-400080"
+            href="https://www.google.com/maps/search/?api=1&query=Goyama+International,+A-13,+Saidham+Co-op+Housing+Society,+P.K.+Road,+Mulund+West,+Mumbai+400080"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Billeshwar Tower, Mulund West, Mumbai, Maharashtra-400080
+            Goyama International, A-13, Saidham Co-op. Housing Society, P.K. Road, Mulund (W), Mumbai-400080
           </a>
         </div>
 
