@@ -92,8 +92,8 @@ const HomeWhoWeAreSection = () => {
             <p>
               We are Goyama International LLP, a globally recognized export firm born from a vision to bridge Indian
               manufacturing excellence with world-class construction and infrastructure needs. Established in 2025, we
-              specialize in exporting high-quality industrial and building materials, particularly artificial quartz
-              slabs and fly ash, to demanding markets like the USA and UK.
+              specialize in exporting high-quality building materials, particularly engineered quartz slabs, to demanding
+              markets like the USA and UK.
             </p>
 
             <p>
@@ -104,9 +104,8 @@ const HomeWhoWeAreSection = () => {
 
             <p>
               Our team comprises procurement specialists, logistics coordinators, and quality control professionals who
-              work seamlessly to meet international benchmarks. Whether you are a developer sourcing bulk quartz slabs
-              or a contractor looking for fly ash that meets Class F specifications, Goyama is your strategic sourcing
-              partner.
+              work seamlessly to meet international benchmarks. Whether you are a developer sourcing bulk quartz slabs or
+              a fabricator looking for consistent, export-grade surfaces, Goyama is your strategic sourcing partner.
             </p>
           </div>
 

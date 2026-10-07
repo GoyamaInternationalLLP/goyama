@@ -41,7 +41,7 @@ const companyValues = [
     icon: FaGlobe,
     title: "Vision",
     description:
-      "Be the preferred global exporter of engineered quartz and fly ash by combining innovation, Indian craftsmanship, and world-class delivery standards.",
+      "Be the preferred global exporter of engineered quartz by combining innovation, Indian craftsmanship, and world-class delivery standards.",
   },
   {
     id: 3,

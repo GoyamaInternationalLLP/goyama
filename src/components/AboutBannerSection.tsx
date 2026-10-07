@@ -57,7 +57,7 @@ const AboutBannerSection = () => {
               <p className="mt-6 text-base md:text-lg max-w-[520px] text-gray-200 animate-slideleft text-justify">
                 Goyama International is a globally focused export company based in India, delivering top-tier
                 construction and industrial materials to clients across the USA, UK, and beyond. With specialization in
-                engineered quartz slabs, fly ash, silica fume, flooring, and more, we merge Indian manufacturing
+                engineered quartz slabs, flooring, and more, we merge Indian manufacturing
                 strengths with global quality standards.
               </p>
             </div>
